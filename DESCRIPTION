@@ -1,12 +1,13 @@
 Package: CourseSkeleton
-Title: What the Package Does (One Line, Title Case)
+Title: The skeleton for a new course
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Stéphane",
+           family = "Dray",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
+           email = "stephane.dray@univ-lyon1.fr",
+           comment = c(ORCID = "0000-0003-0153-1105")
+Description: This package contains the material of the course. Slides of course and practicals are provided.
 License: AGPL (>= 3)
 ByteCompile: true
 Encoding: UTF-8
