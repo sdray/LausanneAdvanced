@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "first.last@example.com")
 Description: What the package does (one paragraph).
-License: MIT + file LICENSE
+License: AGPL (>= 3)
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
