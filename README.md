@@ -1,17 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# CourseSkeleton
+# LausanneAdvanced
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sdray/CourseSkeleton/main?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sdray/LausanneAdvanced/main?urlpath=rstudio)
 
-This repository contains the material for the course *An skeleton for my
-course*.
+This repository contains the material for the course *Training in ade4
+in R - Module II: Advanced methods*.
 
 ## Contents
 
-The directory contains the material for the different sessions (course
-and practical). The structure of this compendium is as follows:
+The directory contains the material for the first four sessions (course
+and practical). The last session is designed for open discussion and
+personal work. The structure of this compendium is as follows:
 
 -   [course](course): Source (R Markdown) to reproduce the slides of the
     course. It contains also rendered versions (html and pdf documents)
@@ -23,13 +24,36 @@ and practical). The structure of this compendium is as follows:
 
 ## Program
 
--   **Session XX**: This is a short description of the session.
+-   **Session 1**: Welcome, presentation of participants. Introduction.
+    Analysis of one table and one categorical variable.
     -   Course
-        \[[html](course/sessionXX/sessionXX.html)\|[pdf](course/sessionXX/sessionXX.pdf)\|[Rmd](course/sessionXX/sessionXX.Rmd)\]
+        \[[html](course/session1/session1.html)\|[pdf](course/session1/session1.pdf)\|[Rmd](course/session1/session1.Rmd)\]
     -   Practical
-        \[[html](practical/sessionXX/sessionXX.html)\|[pdf](practical/sessionXX/sessionXX.pdf)\|[Rmd](practical/sessionXX/sessionXX.Rmd)\]
+        \[[html](practical/session1/session1.html)\|[pdf](practical/session1/session1.pdf)\|[Rmd](practical/session1/session1.Rmd)\]
+-   **Session 2**: Two-table methods.
+    -   Course
+        \[[html](course/session2/session2.html)\|[pdf](course/session2/session2.pdf)\|[Rmd](course/session2/session2.Rmd)\]
+    -   Practical
+        \[[html](practical/session2/session2.html)\|[pdf](practical/session2/session2.pdf)\|[Rmd](practical/session2/session2.Rmd)\]
         / Correction
-        \[[html](practical/sessionXX/sessionXX-corrected.html)\|[pdf](practical/sessionXX/sessionXX-corrected.pdf)\]
+        \[[html](practical/session2/session2-corrected.html)\|[pdf](practical/session2/session2-corrected.pdf)\]
+-   **Session 3**: K-Table methods
+    -   Course
+        \[[html](course/session3/session3.html)\|[pdf](course/session3/session3.pdf)\|[Rmd](course/session3/session3.Rmd)\]
+    -   Practical
+        \[[html](practical/session3/session3.html)\|[pdf](practical/session3/session3.pdf)\|[Rmd](practical/session3/session3.Rmd)\]
+        / Correction
+        \[[html](practical/session3/session3-corrected.html)\|[pdf](practical/session3/session3-corrected.pdf)\]
+-   **Session 4**: Spatial multivariate analysis.
+    -   Course
+        \[[html](course/session4/session4.html)\|[pdf](course/session4/session4.pdf)\|[Rmd](course/session4/session4.Rmd)\]
+    -   Practical
+        \[[html](practical/session4/session4.html)\|[pdf](practical/session4/session4.pdf)\|[Rmd](practical/session4/session4.Rmd)\]
+        / Correction
+        \[[html](practical/session4/session4-corrected.html)\|[pdf](practical/session4/session4-corrected.pdf)\]
+-   **Session 5**: Examples of use of multivariate analysis methods with
+    ade4 in R. Group work and discussions on data sets presented by
+    participants.
 
 ## How to run in your browser or download and run locally
 
@@ -40,7 +64,7 @@ optionally [RStudio
 Desktop](https://rstudio.com/products/rstudio/download/).
 
 You can download the compendium as a zip from from this URL:
-[main.zip](https://github.com/sdray/CourseSkeleton/archive/refs/heads/main.zip).
+[main.zip](https://github.com/sdray/LausanneAdvanced/archive/refs/heads/main.zip).
 After unzipping:
 
 -   open the `.Rproj` file in RStudio
@@ -49,14 +73,15 @@ After unzipping:
 
 An alternative is to use the following code in your R session:
 
-`usethis::use_course("sdray/CourseSkeleton", destdir = "~/Bureau/")`
+`usethis::use_course("sdray/LausanneAdvanced", destdir = "~/Desktop/")`
 
 ### How to cite
 
 Please cite this document as:
 
-> Dray, S. (2021). An skeleton for my course . Accessed 20 sept. 2021.
-> Online at <https://github.com/sdray/CourseSkeleton/>
+> Dray, S. (2021). Training in ade4 in R - Module II: Advanced methods .
+> Accessed 07 déc. 2021. Online at
+> <https://github.com/sdray/LausanneAdvanced/>
 
 ### Licenses
 
@@ -76,28 +101,32 @@ We welcome contributions from everyone.
 
 ``` r
 utils::sessionInfo()
-#> R version 4.1.1 (2021-08-10)
+#> R version 4.1.2 (2021-11-01)
 #> Platform: x86_64-pc-linux-gnu (64-bit)
-#> Running under: Ubuntu 20.04.3 LTS
+#> Running under: Ubuntu 21.04
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 #> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=fr_FR.UTF-8       LC_NUMERIC=C               LC_TIME=fr_FR.UTF-8        LC_COLLATE=fr_FR.UTF-8    
-#>  [5] LC_MONETARY=fr_FR.UTF-8    LC_MESSAGES=fr_FR.UTF-8    LC_PAPER=fr_FR.UTF-8       LC_NAME=C                 
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=fr_FR.UTF-8 LC_IDENTIFICATION=C       
+#>  [1] LC_CTYPE=fr_FR.UTF-8       LC_NUMERIC=C               LC_TIME=fr_FR.UTF-8       
+#>  [4] LC_COLLATE=fr_FR.UTF-8     LC_MONETARY=fr_FR.UTF-8    LC_MESSAGES=fr_FR.UTF-8   
+#>  [7] LC_PAPER=fr_FR.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+#> [10] LC_TELEPHONE=C             LC_MEASUREMENT=fr_FR.UTF-8 LC_IDENTIFICATION=C       
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] knitr_1.31        magrittr_2.0.1    usethis_2.0.1     devtools_2.4.2    pkgload_1.2.1     here_1.0.1       
-#>  [7] R6_2.5.0          rlang_0.4.11      fastmap_1.1.0     stringr_1.4.0     tools_4.1.1       pkgbuild_1.2.0   
-#> [13] xfun_0.22         sessioninfo_1.1.1 cli_2.5.0         withr_2.4.2       htmltools_0.5.1.1 ellipsis_0.3.2   
-#> [19] remotes_2.3.0     yaml_2.2.1        digest_0.6.27     rprojroot_2.0.2   lifecycle_1.0.0   crayon_1.4.1     
-#> [25] processx_3.5.1    purrr_0.3.4       callr_3.6.0       fs_1.5.0          ps_1.6.0          testthat_3.0.2   
-#> [31] glue_1.4.2        memoise_2.0.0     cachem_1.0.4      evaluate_0.14     rmarkdown_2.7     stringi_1.6.2    
-#> [37] compiler_4.1.1    desc_1.3.0        prettyunits_1.1.1 pagedown_0.13
+#>  [1] compiler_4.1.2    pillar_1.6.2      prettyunits_1.1.1 remotes_2.4.0     tools_4.1.2      
+#>  [6] testthat_3.0.4    digest_0.6.27     pkgbuild_1.2.0    pkgload_1.2.2     evaluate_0.14    
+#> [11] memoise_2.0.0     lifecycle_1.0.0   tibble_3.1.4      pkgconfig_2.0.3   rlang_0.4.11     
+#> [16] rstudioapi_0.13   cli_3.0.1         yaml_2.2.1        pagedown_0.15     xfun_0.26        
+#> [21] fastmap_1.1.0     stringr_1.4.0     withr_2.4.2       knitr_1.34        desc_1.3.0       
+#> [26] fs_1.5.0          vctrs_0.3.8       devtools_2.4.2    rprojroot_2.0.2   glue_1.4.2       
+#> [31] here_1.0.1        R6_2.5.1          processx_3.5.2    fansi_0.5.0       rmarkdown_2.11   
+#> [36] sessioninfo_1.1.1 callr_3.7.0       purrr_0.3.4       magrittr_2.0.1    ps_1.6.0         
+#> [41] ellipsis_0.3.2    htmltools_0.5.2   usethis_2.0.1     utf8_1.2.2        stringi_1.7.4    
+#> [46] cachem_1.0.6      crayon_1.4.1
 ```
