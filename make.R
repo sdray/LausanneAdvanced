@@ -10,7 +10,7 @@ devtools::install(build = FALSE)
 ##build README.md and html
 rmarkdown::render(here::here("README.Rmd"))
 ##build html
-rmarkdown::render(here::here("course/sessionXX","sessionXX.Rmd"))
+rmarkdown::render(here::here("course/session1","session1.Rmd"))
 
 rmarkdown::render(here::here("practical/sessionXX","sessionXX.Rmd"))
 rmarkdown::render(here::here("practical/sessionXX","sessionXX.Rmd"),
