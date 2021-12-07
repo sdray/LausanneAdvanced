@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Two-table methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2021-12-07" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Two-table methods
+## in practice
+### Stéphane Dray
+### 2021-12-07
+
+---
+
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+## Three strategies
+
+.column-left[
+.center[
+
+![alt text](img/YXcancor.png)
+#### Canonical Correlation Analysis
+
+&lt;br&gt;
+
+`cancor(tabY, tabX)`
+
+`\(cor(\mathbf{Xa}, \mathbf{Yb})\)`
+
+symmetric
+]
+]
+
+.column-center[
+.center[
+![alt text](img/YXcoinertia.png)
+#### Co-Inertia Analysis
+&lt;br&gt;&lt;br&gt;
+`coinertia(dudiY, dudiX)`
+
+`\(cov(\mathbf{XQa}, \mathbf{YMb})\)`
+
+symmetric
+]
+]
+.column-right[
+.center[
+
+![alt text](img/YXrda.png)
+#### Instrumental variables
+
+&lt;br&gt;
+`pcaiv(dudiY, tabX)`
+
+`\(\sqnorm{\widehat{\mb{Y}}\mb{Q}\mb{a}}{\mb{D}}\)`
+
+asymmetric
+]
+]
+
+---
+## Co-inertia analysis
+.pull-left[
+.center[
+![alt text](img/YXcoinertia.png)
+]
+]
+.pull-right[
+* function `ade4::coinertia`
+* maximization of `\(cov(\mathbf{XQa}, \mathbf{YMb})\)`
+]
+
+A compromise between canonical correlation analysis, and the two PCAs:
+
+`$$cov(\mathbf{XQa}, \mathbf{YMb}) = cor(\mathbf{XQa}, \mathbf{YMb}) \cdot \norm{\mb{XQa}}{\mb{D}} \cdot \norm{\mb{YMb}}{\mb{D}}$$`
+---
+.center[
+`$$cov(\mathbf{XQa}, \mathbf{YMb}) = cor(\mathbf{XQa}, \mathbf{YMb}) \cdot \norm{\mb{XQa}}{\mb{D}} \cdot \norm{\mb{YMb}}{\mb{D}}$$`
+
+&lt;img src="img/coinertia.png" width="50%" height="50%" style="display: block; margin: auto;" /&gt;
+
+]
+---
+## Perform the analysis
+
+
+```r
+library(ade4)
+library(adegraphics)
+data(doubs)
+pca_fish &lt;- dudi.pca(doubs$fish, scale = FALSE, scannf = FALSE)
+pca_env &lt;- dudi.pca(doubs$env, scannf = FALSE)
+*coi &lt;- coinertia(pca_fish, pca_env, scannf = FALSE)
+```
+
+---
+## Test the significance of the link
+.pull-left[
+
+```r
+rt.coi &lt;- randtest(coi)
+plot(rt.coi)
+```
+
+&lt;img src="fig/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+```r
+rt.coi
+```
+
+```
+## Monte-Carlo test
+## Call: randtest.coinertia(xtest = coi)
+## 
+## Observation: 0.4505569 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.001 
+## Alternative hypothesis: greater 
+## 
+##     Std.Obs Expectation    Variance 
+## 8.718012307 0.082245760 0.001784821
+```
+]
+
+---
+## Have a look to the summary
+
+```r
+summary(coi)
+```
+
+```
+## Coinertia analysis
+## 
+## Class: coinertia dudi
+## Call: coinertia(dudiX = pca_fish, dudiY = pca_env, scannf = FALSE)
+## 
+## Total inertia: 134.7
+## 
+## Eigenvalues:
+##      Ax1      Ax2      Ax3      Ax4      Ax5 
+## 119.0194  13.8714   0.7566   0.5278   0.2709 
+## 
+## Projected inertia (%):
+##     Ax1     Ax2     Ax3     Ax4     Ax5 
+## 88.3570 10.2978  0.5617  0.3918  0.2011 
+## 
+...
+```
+---
+## Plot the results
+
+
+```r
+g1 &lt;- plot(coi)
+```
+
+&lt;img src="fig/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g1)
+```
+
+```
+## [1] "Xax"       "Yax"       "eig"       "XYmatch"   "Yloadings"
+## [6] "Xloadings"
+```
+---
+## Loadings for variables
+.pull-left[
+
+```r
+g1$Xloadings
+```
+
+&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
+
+  `\(\mb{A}\)`: coefficients (loadings) for the variables of `\(\mb{X}\)` (`coi$c1`)
+]
+.pull-right[
+
+```r
+g1$Yloadings
+```
+
+&lt;img src="fig/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
+
+ `\(\mb{B}\)`: coefficients (loadings) for the variables of `\(\mb{Y}\)` (`coi$l1`)
+]
+---
+## Scores for individuals
+
+
+```r
+g1$XYmatch
+```
+
+&lt;img src="fig/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
+
+*  `\(\mathbf{XQA}\)`: scores of individuals obtained from table `\(\mb{X}\)` (`coi$lX`)
+*  `\(\mathbf{YMB}\)`: scores of individuals obtained from table `\(\mb{Y}\)` (`coi$lY`)
+*  Normed versions (`coi$mX` and `coi$mY`) are represented
+---
+## Analysis on instrumental variables
+.pull-left[
+.center[
+![alt text](img/YXrda.png)
+]
+]
+.pull-right[
+
+* function `ade4::pcaiv`
+* maximization of `\(\sqnorm{\widehat{\mb{Y}}\mb{Q}\mb{a}}{\mb{D}}\)`
+]
+
+This framework encompasses:
+
+* Redundancy Analysis (when `\(\mb{Y}\)` is analyzed by principal component analysis by `dudi.pca`)
+
+* Canonical Correspondence Analysis (when `\(\mb{Y}\)` is analyzed by correspondence analysis by `dudi.coa`)
+
+---
+## Perform the analysis
+### Redundancy Analysis (RDA)
+
+
+```r
+pca_fish &lt;- dudi.pca(doubs$fish, scale = FALSE, scannf = FALSE)
+*rda1 &lt;- pcaiv(pca_fish, doubs$env, scannf = FALSE)
+```
+
+---
+## Test the significance of the link
+.pull-left[
+
+```r
+rt.rda &lt;- randtest(rda1)
+plot(rt.rda)
+```
+
+&lt;img src="fig/unnamed-chunk-12-1.svg" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+```r
+rt.rda
+```
+
+```
+## Monte-Carlo test
+## Call: randtest.pcaiv(xtest = rda1)
+## 
+## Observation: 0.7605909 
+## 
+## Based on 99 replicates
+## Simulated p-value: 0.01 
+## Alternative hypothesis: greater 
+## 
+##     Std.Obs Expectation    Variance 
+## 4.483155683 0.394448154 0.006670112
+```
+]
+---
+## Have a look to the summary
+
+```r
+summary(rda1)
+```
+
+```
+## Principal component analysis with instrumental variables
+## 
+## Class: pcaiv dudi
+## Call: pcaiv(dudi = pca_fish, df = doubs$env, scannf = FALSE)
+## 
+## Total inertia: 50.26
+## 
+## Eigenvalues:
+##     Ax1     Ax2     Ax3     Ax4     Ax5 
+## 38.4177  5.9540  2.4162  1.3387  0.7431 
+## 
+## Projected inertia (%):
+##     Ax1     Ax2     Ax3     Ax4     Ax5 
+##  76.441  11.847   4.808   2.664   1.478 
+## 
+...
+```
+---
+## Plot the results
+
+
+```r
+g2 &lt;- plot(rda1)
+```
+
+&lt;img src="fig/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g2)
+```
+
+```
+## [1] "Xloadings" "Xcor"      "eig"       "XYmatch"   "Yax"      
+## [6] "Ycol"
+```
+---
+## Loadings for variables of Y
+
+```r
+g2$Ycol
+```
+
+&lt;img src="fig/unnamed-chunk-16-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mb{A}\)`: coefficients (loadings) for the variables of `\(\widehat{\mb{Y}}\)` (`rda1$c1`)
+---
+## Scores for individuals
+
+
+```r
+g2$XYmatch
+```
+
+&lt;img src="fig/unnamed-chunk-17-1.svg" style="display: block; margin: auto;" /&gt;
+
+* `\(\widehat{\mb{Y}}\mb{QA}\)`: row scores as linear combination of the explanatory variables (`rda1$li`)
+* `\(\mb{Y}\mb{QA}\)`: projection of the rows of `\(\mb{Y}\)` on the principal axes (`rda1$ls`)
+---
+## Variables of X
+.pull-left[
+
+```r
+g2$Xloadings
+```
+
+&lt;img src="fig/unnamed-chunk-18-1.svg" style="display: block; margin: auto;" /&gt;
+
+coefficients (loadings) for the variables of `\(\mb{X}\)` (`rda1$fa`)
+]
+.pull-right[
+
+```r
+g2$Xcor
+```
+
+&lt;img src="fig/unnamed-chunk-19-1.svg" style="display: block; margin: auto;" /&gt;
+
+correlation with the variables of `\(\mb{X}\)` (`rda1$cor`)
+]
+---
+## Your turn
+1. Create an Rmd file
+2. Load the `rpjdl` data set from `ade4`
+3. See `?rpjdl` for details
+4. Perform a simple analysis on faunistic data and interpret (either `dudi.pca` or `dudi.coa`)
+5. Perform a two-table analysis to relate abundance to environmental data (either `coinertia` or `pcaiv`)
+6. Interpret
+---
+## PCA or CA on Y?
+
+* PCA assumes a linear response while CA assumes a Gaussian model. Hence, the latter is adapted for long ecological gradients while the former is suitable when only a short part of the gradient is sampled (or to detect decrease in abundances for all species, e.g. effect of pollution)
+
+.pull-left[
+&lt;img src="img/LinearNiche.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="img/GaussianNiche.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+]
+
+* In co-inertia analysis, be careful with row weights:
+
+```r
+coa_fish &lt;- dudi.pca(doubs$fish, scale = FALSE, scannf = FALSE)
+*pca_env &lt;- dudi.pca(doubs$env, scannf = FALSE, row.w = coa_fish$lw)
+coi &lt;- coinertia(coa_fish, pca_env, scannf = FALSE)
+```
+* Canonical correspondence analysis is simply:
+
+```r
+cca1 &lt;- pcaiv(coa_fish, doubs$env, scannf = FALSE)
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
