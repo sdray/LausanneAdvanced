@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Two-table methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2021-12-07" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Two-table methods
+## Discrimination and co-ordination
+### Stéphane Dray
+### 2021-12-07
+
+---
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+class:
+# Introduction
+
+```r
+library(ade4)
+library(adegraphics)
+adegpar(paxes.draw = TRUE, pbackground.col = "lightgrey",
+    pgrid.col = "white")
+data(doubs)
+str(doubs, max.level = 1)
+```
+
+```
+## List of 4
+##  $ env    :'data.frame':	30 obs. of  11 variables:
+##  $ fish   :'data.frame':	30 obs. of  27 variables:
+##  $ xy     :'data.frame':	30 obs. of  2 variables:
+##  $ species:'data.frame':	27 obs. of  4 variables:
+```
+* Species table: abundance of 27 fish species recorded for 30 sites on the Doubs river
+
+* Environmental table: 11 environmental variables for the same sites
+
+* Spatial coordinates
+---
+# Introduction
+.pull-left[
+
+![alt text](img/onetable.png)
+
+
+One table with *p* variables measured on *n* individuals
+
+* quantitative (`dudi.pca`)
+* categorical (`dudi.coa` or `dudi.acm`)
+* both (`dudi.mix` or `dudi.hillsmith`)
+]
+.pull-right[
+Describe the information contained in the table:
+
+* Identify which variables are the most linked
+
+* Identify the differences/similarities between individuals
+]
+
+---
+
+```r
+pca_fish &lt;- dudi.pca(doubs$fish, scale = FALSE, scannf = FALSE)
+biplot(pca_fish, ppoints.col = "blue", row.plabel.cex = 0,
+    posieig = "none")
+```
+
+&lt;img src="fig/01acp-1.svg" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+s.value(doubs$xy, doubs$fish[, 1:16], centerpar = TRUE,
+    symbol = "circle", plegend.drawKey = FALSE, paxes.draw = FALSE)
+```
+
+&lt;img src="fig/03acp-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+s.value(doubs$xy, pca_fish$li, symbol = "circle",
+    paxes.draw = FALSE)
+```
+
+&lt;img src="fig/02acp-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+--
+.center[
+### Which factors can explain these structures?
+]
+---
+# Two tables
+
+.pull-left[
+
+![alt text](img/twotable.png)
+
+
+One table with *p* variables measured on *n* individuals
+
+One table with *m* variables measured on the same individuals
+
+]
+.pull-right[
+Identify what is the information common to both tables:
+
+* Identify which variables are the most linked
+
+* Identify how this link varies for individuals
+
+]
+
+--
+
+.center[
+
+## But how?
+
+]
+---
+## Indirect ordination
+
+.pull-left[
+.center[
+
+![alt text](img/Y.png)
+
+Summarize by a simple ordination method
+
+&lt;img src="fig/unnamed-chunk-1-1.svg" width="50%" style="display: block; margin: auto;" /&gt;
+
+]
+]
+
+--
+
+.pull-right[
+.center[
+
+![alt text](img/X.png)
+
+and interpret the structures with the second table using simple tools
+]
+
+* Graphical interpretation
+* Correlation
+* Regression
+]
+
+---
+
+.pull-left[
+### Graphics
+
+
+```r
+s.value(pca_fish$li,
+    scale(doubs$env$dfs))
+```
+
+&lt;img src="fig/unnamed-chunk-2-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+### Correlation
+
+
+```r
+s1d.curve(pca_fish$li,
+    p1.horizontal = FALSE,
+    at = doubs$env$dfs)
+```
+
+&lt;img src="fig/unnamed-chunk-3-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
+
+```r
+cor(pca_fish$li, doubs$env$dfs)
+```
+
+```
+##            [,1]
+## Axis1 0.8169072
+## Axis2 0.1136704
+```
+]
+
+---
+.pull-left[
+### Correlation
+
+
+```r
+s.corcircle(cor(doubs$env,
+    pca_fish$li))
+```
+
+&lt;img src="fig/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+### Regression
+
+```r
+lm1 &lt;- lm(as.matrix(pca_fish$li) ~
+    as.matrix(doubs$env))
+s.arrow(coefficients(lm1)[-1,
+    ], labels = names(doubs$env))
+```
+
+&lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+## Analysis of the concanated table
+.center[
+.pull-left[
+
+![alt text](img/YX.png)
+
+Concatenation
+]
+
+.pull-right[
+![alt text](img/YXconcatenated.png)
+
+Simple ordination
+]
+]
+
+---
+
+```r
+conc &lt;- cbind(doubs$fish, doubs$env)
+biplot(dudi.pca(conc, scannf = FALSE), col.plabel.col = rep(c(2,
+    4), c(27, 11)))
+```
+
+&lt;img src="fig/unnamed-chunk-6-1.svg" height="70%" style="display: block; margin: auto;" /&gt;
+
+---
+## From two variables to two tables
+.pull-left[
+.center[
+![alt text](img/xyvar.png)
+
+![alt text](img/YX.png)
+]
+]
+
+.pull-right[
+* Canonical Correlation Analysis (correlation)
+
+* Co-Inertia Analysis (covariance)
+
+* Analysis on instrumental variables (regression)
+]
+
+---
+## Linear combinations
+
+### PCA
+Find a vector of coefficients `\(\mb{a} = [a_1, \cdots , a_p]\tr\)` maximizing `\(\sqnorm{\mb{XQa}}{\mb{D}}\)` with `\(\norm{\mb{a}}{\mb{Q}} = 1\)`
+
+### Linear regression
+Find a vector of coefficients `\(\mb{a} = [a_1, \cdots , a_p]\tr\)` maximizing `\(\sqnorm{\mb{Xay}}{\mb{D}}\)`
+
+### Two-table methods
+Define two vectors of coefficients `\(\mb{a}\)` and `\(\mb{b}\)` to build two linear combinations `\(\mb{XQa}\)` and `\(\mb{YMb}\)`
+---
+## Canonical correlation analysis
+.pull-left[
+.center[
+![alt text](img/YXcancor.png)
+]
+]
+* function `stats:cancor`
+* maximization of `\(cor(\mathbf{Xa}, \mathbf{Yb})\)`
+---
+## Co-inertia analysis
+.pull-left[
+.center[
+![alt text](img/YXcoinertia.png)
+]
+]
+.pull-right[
+* function `ade4::coinertia`
+* maximization of `\(cov(\mathbf{XQa}, \mathbf{YMb})\)`
+]
+
+A compromise between canonical correlation analysis, and the two PCAs:
+
+`$$cov(\mathbf{XQa}, \mathbf{YMb}) = cor(\mathbf{XQa}, \mathbf{YMb}) \cdot \norm{\mb{XQa}}{\mb{D}} \cdot \norm{\mb{YMb}}{\mb{D}}$$`
+
+---
+
+```r
+pca_env &lt;- dudi.pca(doubs$env, scannf = FALSE)
+coi &lt;- coinertia(pca_fish, pca_env, scannf = FALSE)
+plot(coi)
+```
+
+&lt;img src="fig/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+rt.coi &lt;- randtest(coi)
+plot(rt.coi)
+```
+
+&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
+
+Try `summary(coi)`
+---
+## Analysis on instrumental variables
+.pull-left[
+.center[
+![alt text](img/YXrda.png)
+]
+]
+.pull-right[
+
+* function `ade4::pcaiv`
+* maximization of `\(\sqnorm{\widehat{\mb{Y}}\mb{Q}\mb{a}}{\mb{D}}\)`
+]
+
+This framework encompasses:
+
+* Redundancy Analysis
+
+* Canonical Correspondence Analysis
+
+---
+
+```r
+rda1 &lt;- pcaiv(pca_fish, doubs$env, scannf = FALSE)
+plot(rda1)
+```
+
+&lt;img src="fig/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+rt.rda &lt;- randtest(rda1)
+plot(rt.rda)
+```
+
+&lt;img src="fig/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
+
+Try `summary(rda1)`
+
+When a PCA is applied on the response table, the method is called Redundancy Analysis
+
+Try to apply a correspondence analysis (`dudi.coa`) instead of a PCA on `doubs$fish`. You obtain Canonical Correspondence Analysis.
+---
+## One particular case
+.pull-left[
+.center[
+![alt text](img/YXbetween.png)
+]
+]
+
+.pull-right[
+The second table contains only one categorical variable
+
+The aim is to maximize the separation between the groups
+
+]
+* `cancor`-like method is Discriminant Analysis (`ade4::discrimin`)
+
+* `pcaiv`-like method is Between-Class Analaysis (`ade4::bca`)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,240 @@
+---
+title: "Correspondence Analysis"
+subtitle: "In practice"  
+author: "Stéphane Dray"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css:  [custom.css, xaringan-themer.css] 
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+            before_body: preamble.tex
+params:
+  correction: FALSE
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(tidy=TRUE, tidy.opts=list(width.cutoff=50), fig.height= 4, fig.width=4, dev='svg', fig.align="center", fig.path = "fig/")
+```
+
+```{r correction, include = FALSE}
+res.correction <- ifelse(params$correction, "markup", "hide")
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_duo(primary_color = "#1F4257", secondary_color = "#F97B64", table_row_even_background_color = "#1F4257")
+```
+
+---
+# Data
+
+We consider the relationship between hair and eyes colors measured on 592 students in Delaware University.
+
+```{r}
+mydata <- read.table("http://pbil.univ-lyon1.fr/R/donnees/snee74.txt", header=TRUE, stringsAsFactors = TRUE)
+names(mydata)
+head(mydata)
+```
+
+---
+# Factors in R
+
+A qualitative variables is stored as `factor` with different categories (`levels`)
+
+```{r}
+is.factor(mydata$yeux)
+levels(mydata$yeux)
+```
+
+---
+# Univariate analysis
+
+* Compute the vector with the number of individuals for each eye color category and display the results on a plot.
+
+```{r, echo = params$correction, include = params$correction, results=res.correction, out.width="30%"}
+summary(mydata$yeux)
+plot(mydata$yeux)
+```
+
+---
+# Contingency table
+
+* Build the contingency table crossing hair and eyes colors. See `?table`
+
+```{r, echo = params$correction, results=res.correction}
+mytab <- table(mydata$cheveux, mydata$yeux)
+```
+
+* Compute row and columns marginal relative frequencies
+```{r, echo = params$correction, results=res.correction}
+rowSums(mytab) / sum(mytab)
+colSums(mytab) / sum(mytab)
+```
+---
+# Bivariate analysis
+
+* Compute and interpret the results of a $\chi^2$ test
+```{r, echo = params$correction, results=res.correction}
+chisq.test(mytab)
+```
+---
+# Bivariate analysis
+
+* Display and interpret the associations between categories with `mosaicplot`
+
+```{r, echo = params$correction, include = params$correction, results=res.correction, out.width="50%"}
+mosaicplot(mytab, shade = TRUE)
+```
+
+---
+# Scoring
+
+Suppose that we can display hair colors by a score
+
+```{r, echo=FALSE, fig.width = 6, fig.height = 2, out.width = "70%"}
+library(adegraphics)
+set.seed(12)
+score.h <- rnorm(4)
+s1d.label(score.h, levels(mydata$cheveux))
+```
+
+
+what would be the best way to display eyes colors?
+(given the distribution of students)
+```{r, echo=FALSE, fig.width = 6, fig.height = 2, out.width = "70%"}
+score.e <- rnorm(4)
+s1d.label(score.e, levels(mydata$yeux))
+```
+
+---
+# Weighted averaging
+
+* Assign a random score to hair colors
+
+```{r, echo = params$correction, results=res.correction}
+set.seed(12)
+score.h <- rnorm(4)
+```
+
+* Compute the position for the eye color 'Vert'
+
+```{r, echo = params$correction, results=res.correction}
+sum(score.h * mytab[,4] / sum(mytab[,4]))
+
+## or
+
+weighted.mean(score.h, w = mytab[,4])
+```
+
+
+---
+# Compute scores for all eye colors
+
+By repeating the same formulas
+```{r}
+score.e <- sapply(1:4, function(x) sum(score.h * mytab[,x] / sum(mytab[,x])))
+```
+
+
+or using matrix algebra
+
+```{r}
+t(prop.table(mytab, 2)) %*% score.h
+```
+
+---
+# Best representation
+
+if 
+```{r, echo=FALSE, fig.width = 6, fig.height = 2, out.width = "70%"}
+library(adegraphics)
+s1d.label(score.h, levels(mydata$cheveux))
+```
+
+then 
+
+```{r, echo=FALSE, fig.width = 6, fig.height = 2, out.width = "70%"}
+s1d.label(score.e, levels(mydata$yeux))
+```
+---
+# Reciprocal representation
+
+* Start from a random score for eyes colors to position hair colors by averaging
+
+```{r, echo = params$correction, results=res.correction}
+set.seed(13)
+score.e <- rnorm(4)
+prop.table(mytab, 1) %*% score.e
+```
+
+---
+# Reciprocal averaging
+
+1. Set a random score for columns
+2. Use the column score to compute a score for rows by weighted averaging
+3. Compute a new score for columns by weighted averaging of row score
+4. Center and scale the two scores using row and column weights
+5. Repeat steps 2-4 until convergence
+
+---
+# Correspondence analysis
+
+The solution of the iterative algorithm can also be obtained by the diagonalization procedure provided by the `dudi.coa` function
+
+
+```{r, message = FALSE}
+library(ade4)
+coa1 <- dudi.coa(unclass(mytab), scannf = FALSE)
+```
+
+* Check the link between $\chi^2$ statistic and total inertia
+
+```{r, echo = params$correction, results=res.correction}
+sum(coa1$eig)
+chisq.test(mytab)$statistic / sum(mytab)
+```
+
+---
+
+# Interpretation
+
+* Compute a row score with unit norm (`$l1`) to obtain a column score by weighted averaging (`$co`) with maximal variance (`$eig`)
+
+* Compute a row score with unit norm (`$c1`) to obtain a column score by weighted averaging (`$li`) with maximal variance (`$eig`)
+
+* Check both results
+
+```{r, echo = params$correction, results=res.correction}
+prop.table(mytab, 1) %*% coa1$c1[,1]
+coa1$li[,1]
+```
+
+---
+# Graphical representation
+
+* Represent and interpret the results using the `scatter` function (check the `method` argument of `scatter.coa`)
+
+```{r, echo = params$correction, include = params$correction, results=res.correction, out.width="50%"}
+scatter(coa1, method = 2)
+```
+
+---
+# Inertia statistics
+
+* Use the `inertia.dudi` function to compute inertia statistics for rows and columns
+
+```{r, echo = params$correction, results=res.correction}
+ic = inertia.dudi(coa1, row.inertia=TRUE, col.inertia=TRUE)
+```
+
+* Represent absolute contributions using the `plot` function (see `?plot.inertia`)
+
+```{r, echo = params$correction, include = params$correction, results=res.correction, out.width="60%", fig.width=6, fig.height=3}
+plot(ic, contrib = "abs")
+```
