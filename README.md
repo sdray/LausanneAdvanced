@@ -24,8 +24,10 @@ personal work. The structure of this compendium is as follows:
 
 ## Program
 
--   **Session 1**: Welcome, presentation of participants. Introduction.
-    Analysis of one table and one categorical variable.
+-   **Session 0**: Welcome, presentation of participants. Introduction.
+    -   Course
+        \[[html](course/session0/session0.html)\|[pdf](course/session0/session0.pdf)\|[Rmd](course/session0/session0.Rmd)\]
+-   **Session 1**: Analysis of one table and one categorical variable.
     -   Course
         \[[html](course/session1/session1.html)\|[pdf](course/session1/session1.pdf)\|[Rmd](course/session1/session1.Rmd)\]
     -   Practical
@@ -110,23 +112,19 @@ utils::sessionInfo()
 #> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=fr_FR.UTF-8       LC_NUMERIC=C               LC_TIME=fr_FR.UTF-8       
-#>  [4] LC_COLLATE=fr_FR.UTF-8     LC_MONETARY=fr_FR.UTF-8    LC_MESSAGES=fr_FR.UTF-8   
-#>  [7] LC_PAPER=fr_FR.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
-#> [10] LC_TELEPHONE=C             LC_MEASUREMENT=fr_FR.UTF-8 LC_IDENTIFICATION=C       
+#>  [1] LC_CTYPE=fr_FR.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=fr_FR.UTF-8        LC_COLLATE=fr_FR.UTF-8    
+#>  [5] LC_MONETARY=fr_FR.UTF-8    LC_MESSAGES=fr_FR.UTF-8   
+#>  [7] LC_PAPER=fr_FR.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=fr_FR.UTF-8 LC_IDENTIFICATION=C       
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] compiler_4.1.2    pillar_1.6.2      prettyunits_1.1.1 remotes_2.4.0     tools_4.1.2      
-#>  [6] testthat_3.0.4    digest_0.6.27     pkgbuild_1.2.0    pkgload_1.2.2     evaluate_0.14    
-#> [11] memoise_2.0.0     lifecycle_1.0.0   tibble_3.1.4      pkgconfig_2.0.3   rlang_0.4.11     
-#> [16] rstudioapi_0.13   cli_3.0.1         yaml_2.2.1        pagedown_0.15     xfun_0.26        
-#> [21] fastmap_1.1.0     stringr_1.4.0     withr_2.4.2       knitr_1.34        desc_1.3.0       
-#> [26] fs_1.5.0          vctrs_0.3.8       devtools_2.4.2    rprojroot_2.0.2   glue_1.4.2       
-#> [31] here_1.0.1        R6_2.5.1          processx_3.5.2    fansi_0.5.0       rmarkdown_2.11   
-#> [36] sessioninfo_1.1.1 callr_3.7.0       purrr_0.3.4       magrittr_2.0.1    ps_1.6.0         
-#> [41] ellipsis_0.3.2    htmltools_0.5.2   usethis_2.0.1     utf8_1.2.2        stringi_1.7.4    
-#> [46] cachem_1.0.6      crayon_1.4.1
+#>  [1] compiler_4.1.2  magrittr_2.0.1  fastmap_1.1.0   tools_4.1.2    
+#>  [5] htmltools_0.5.2 yaml_2.2.1      stringi_1.7.4   rmarkdown_2.11 
+#>  [9] knitr_1.34      stringr_1.4.0   xfun_0.26       digest_0.6.27  
+#> [13] rlang_0.4.11    evaluate_0.14
 ```
