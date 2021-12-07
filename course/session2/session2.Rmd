@@ -1,6 +1,6 @@
 ---
-title: "Two-table methods"
-subtitle: "Co-ordination"  
+title: "Training in ade4 in R - Module II: Advanced methods"
+subtitle: "Two-table methods"  
 author: "Stéphane Dray"
 date: '`r Sys.Date()`'
 output:
