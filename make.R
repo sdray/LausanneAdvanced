@@ -20,6 +20,7 @@ rmarkdown::render(here::here("practical/session2","session2.Rmd"),
 
 ## build pdf
 pagedown::chrome_print(here::here("course/session0","session0.html"))
+pagedown::chrome_print(here::here("course/session2","session2.html"))
 
 pagedown::chrome_print(here::here("practical/session2","session2.html"))
 pagedown::chrome_print(here::here("practical/session2","session2-corrected.html"))
