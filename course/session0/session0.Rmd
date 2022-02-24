@@ -15,6 +15,9 @@ output:
             before_body: preamble.tex
 ---
 
+$$\newcommand{\tripletM}[3]{\left ( #1, #2, #3 \right ) }$$
+
+
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(tidy=TRUE, tidy.opts=list(width.cutoff=50), fig.height= 4, fig.width=4, dev='svg', fig.align="center", fig.path = "fig/")
@@ -209,7 +212,9 @@ To answer the two previous questions, we define
 * $\mb{D}$,  a $n \times n$ positive symmetric matrix, used as an inner product in $\mathbb{R}^n$ and thus allows to measure relationships between the $p$ variables.
 
 $$ \left ( \mathbf{X}, \mathbf{Q}, \mathbf{D} \right ) $$
+
 ---
+
 # Duality diagram theory
 $$\mathbf{X} \mathbf{Q} \mathbf{X}\tr \mathbf{D} \mathbf{B} = \mathbf{B} \bm{\Lambda}$$
     $$\mathbf{X}\tr\mathbf{D}\mathbf{X} \mathbf{Q} \mathbf{A} =  \mathbf{A} \bm{\Lambda}$$
@@ -227,6 +232,22 @@ $$\mathbf{X} \mathbf{Q} \mathbf{X}\tr \mathbf{D} \mathbf{B} = \mathbf{B} \bm{\La
    
    $$\left\langle {\mathbf{XQa}} | \mathbf{k} \right\rangle _\mathbf{D}=\left\langle {\mathbf{X}^t\mathbf{Db}} | \mathbf{a} \right\rangle _\mathbf{Q} = \sqrt{\lambda}$$
 ---
+
+# Inertia
+
+* The total amount of information (variation) contained in the data is called the inertia
+
+$$ I_{\tripletM{\mb{X}}{\mb{Q}}{\mb{D}}}   =  Trace(\mb{X}\tr\mb{D}\mb{X}\mb{Q})$$
+
+* Multivariate analysis aims to find new axes maximizing the projected inertia (i.e., the inertia of the projections). 
+
+* Total inertia is equal to the sum of eigenvalues
+
+* In the case of PCA, total inertia is a sum of variances and an eigenvalue is equal to the variance of the projections on the associated axis
+
+
+---
+
 # Implementation in `ade4`
 Computations are performed by the function `as.dudi`. This functions takes 3 arguments defining the statistical triplet and returns an object of class `dudi` that contains:
 
