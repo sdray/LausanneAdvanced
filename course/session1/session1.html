@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Training in ade4 in R - Module II: Advanced methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2022-02-24" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Training in ade4 in R - Module II: Advanced methods
+## Analysis of one table and one categorical variable
+### Stéphane Dray
+### 2022-02-24
+
+---
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+`$$\newcommand{\tripletM}[3]{\left ( #1, #2, #3 \right ) }$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+class:
+# Introduction
+
+```r
+library(ade4)
+library(adegraphics)
+adegpar(paxes.draw = TRUE, pbackground.col = "lightgrey",
+    pgrid.col = "white")
+data(meau)
+str(meau, max.level = 1)
+```
+
+```
+## List of 3
+##  $ env   :'data.frame':	24 obs. of  10 variables:
+##  $ design:'data.frame':	24 obs. of  2 variables:
+##  $ spe   :'data.frame':	24 obs. of  13 variables:
+```
+* Species table: abundance of 13 Ephemeroptera species recorded for 24 sites
+
+* Environmental table: 10 physicochemical variables for the same sites
+
+* Expermiental design (6 sites and 4 seasons)
+---
+# Introduction
+
+.pull-left[
+* Data table: 10 environmental variables measured for 24
+samples (6 sites sampled each season) on the Méaudret
+river
+* Categorical variable(s): 6 sites or 4 seasons
+* S1-S5 on the Méaudret, S6 is a control (on the Bourne river)
+
+
+```r
+head(meau$design)
+```
+
+```
+##      season site
+## sp_1 spring   S1
+## sp_2 spring   S2
+## sp_3 spring   S3
+## sp_4 spring   S4
+## sp_5 spring   S5
+## sp_6 spring   S6
+```
+
+]
+.pull-right[
+&lt;img src="img/meau-map.png" width="60%" style="display: block; margin: auto;" /&gt;
+]
+---
+# Introduction
+.pull-left[
+
+![alt text](img/YXbetween.png)
+
+
+* One table with *p* variables measured on *n* individuals
+* One categorical variable partitioning the *n* individuals
+in *g* groups (colors)
+]
+.pull-right[
+Describe the information contained in the table:
+
+* Identify differences between individuals **belonging to
+different groups**
+* Identify which variables best separate the groups
+]
+
+---
+# Introduction
+.pull-left[
+
+![alt text](img/YXbetween.png)
+
+
+* One table with *p* variables measured on *n* individuals
+* One categorical variable partitioning the *n* individuals
+in *g* groups (colors)
+]
+.pull-right[
+Describe the information contained in the table:
+
+* Identify differences between individuals **after removing
+differences among groups**
+* Identify relationships between variables
+]
+
+---
+# Questions
+.pull-left[
+
+```r
+pca_env &lt;- dudi.pca(meau$env, scannf = FALSE)
+biplot(pca_env, ppoints.col = "blue", row.plabel.cex = 0,
+    posieig = "none")
+```
+
+&lt;img src="fig/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
+]
+--
+.pull-right[
+.center[
+### Which structure is due to seasonal variation?
+### Which part is not explained by seasonal variation?
+]
+]
+---
+# The univariate case 
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-4-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Total variation
+
+$$
+\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
+$$
+]
+
+---
+# The univariate case 
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-5-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Total variation
+
+$$
+\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
+$$
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-6-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Within-group variation
+`$$\sigma_i^2 = \frac{1}{n_i}\sum_{j=1}^{n_i}{(x_j-\bar x_i)^2}$$`
+]
+---
+# The univariate case 
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-7-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Total variation
+
+$$
+\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
+$$
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-8-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Within-group variation
+
+`$$W= \sum_{i=1}^k{\frac{n_i}{n}\sigma_i^2}$$`
+]
+---
+# The univariate case 
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-9-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Total variation
+
+$$
+\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
+$$
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-10-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Between-group variation
+
+$$
+B = \sum_{i=1}^n{\frac{n_i}{n}(\bar x_i-\bar x)^2}
+$$
+]
+
+---
+# The univariate case
+## the correlation ratio
+
+We have
+
+`$$\sigma^{2}=\sum_{i=1}^k{\frac{n_{i}}{n}\sigma_{i}^2}+\sum_{i=1}^k{\frac{n_{i}}{n}(\bar x_{i} - \bar x)^2}$$`
+which corresponds to
+$$
+T =  W  +  B 
+$$
+
+The correlation ratio varies between 0 and 1 and is defined as 
+
+$$
+\eta^2 = \frac{B}{T}
+$$
+---
+## The multivariate case
+.pull-left[
+.center[
+![alt text](img/X.png)
+]
+]
+
+.pull-right[
+Total inertia measures the amount of variation in the data. 
+`$$I_{\tripletM{\mb{X}}{\mb{Q}}{\mb{D}}}   =  Trace(\mb{X}\tr\mb{D}\mb{X}\mb{Q})$$`
+&lt;br&gt;
+For PCA, we have
+
+`$$I_{\tripletM{\mb{X}}{\mb{Q}}{\mb{D}}}  = \sum_{j = 1}^{p}{var(\mb{x}_j})$$`
+]
+
+---
+## ANOVA-like decomposition of a table
+
+.pull-left[
+&lt;img src="img/between-decomposition.png" width="696" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+The analysis of `\(\mb{X}\)` leads to two additive components
+
+* Between-Class Analysis focuses on the differences between groups `\((\mb{X}_B)\)`
+* Within-Class Analysis focuses on the differences between individuals while removing differences between groups `\((\mb{X}_W)\)`
+]
+---
+
+## Decomposition of total inertia
+
+`$$\begin{array}{rll}
+I_{\tripletM{\mb{X}}{\mb{Q}}{\mb{D}}}  &amp; = &amp; Trace(\mb{X}\tr\mb{D}\mb{X}\mb{Q})\\
+&amp;= &amp;Trace(\left (\mb{X}_B + \mb{X}_W\right )\tr\mb{D}\left (\mb{X}_B + \mb{X}_W \right )\mb{Q})\\
+&amp;= &amp;  Trace(\mb{X}_B\tr\mb{D}\mb{X}_B\mb{Q}) +  Trace(\mb{X}_W\tr\mb{D}\mb{X}_W\mb{Q})
+\end{array}$$`
+
+&lt;br&gt;
+
+We obtain the following additive decomposition
+
+`$$I_{\tripletM{\mb{X}}{\mb{Q}}{\mb{D}}}=I_{\tripletM{\mb{X}_B}{\mb{Q}}{\mb{D}}}+I_{\tripletM{\mb{X}_W}{\mb{Q}}{\mb{D}}}$$`
+that translates into
+
+$$
+\textrm{Total Inertia}  = \textrm{Between-Class Inertia}  +  \textrm{Within-Class Inertia}
+$$
+&lt;br&gt;
+
+--
+Remember that the inertia is equal to the sum of eigenvalues of the associated analysis
+---
+
+## Removing an effect
+### Within-Class Analysis
+
+WCA is simply the analysis of the table centered per group `\((\mb{X}_W)\)`. It is a partial analysis that focuses on the structure removing the effect of the categorical variables.
+
+
+```r
+wca.season &lt;- wca(pca_env, meau$design$season, scannf = FALSE)
+biplot(wca.season)
+```
+
+&lt;img src="fig/unnamed-chunk-12-1.svg" width="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+## Focusing on an effect
+### Testing the significance
+
+.center[ 
+`\(R^2\)` = Between-class inertia / Total inertia
+]
+.pull-left[
+&lt;img src="img/permutBCA.png" width="448" style="display: block; margin: auto;" /&gt;
+
+.center[Permutation test]
+]
+
+.pull-right[
+
+&lt;img src="img/testBCA.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+---
+
+## Two strategies
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-16-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+* Principal component analysis maximizes T
+* Between-class analysis maximizes B
+* Discriminant analysis maximizes B/T
+---
+## Between-Class and Discriminant Analysis
+
+.pull-left[
+&lt;img src="img/BCAvsDA1.png" width="239" height="70%" style="display: block; margin: auto;" /&gt;
+
+
+```r
+discrimin(pca_env, meau$design$season, scannf = FALSE)
+```
+
+]
+
+.pull-right[
+&lt;img src="img/BCAvsDA2.png" width="295" style="display: block; margin: auto;" /&gt;
+
+
+```r
+bca(pca_env, meau$design$season, scannf = FALSE)
+```
+
+]
+
+---
+## Spurious groups
+
+BCA of random data with a moderate number of variables
+
+&lt;img src="fig/unnamed-chunk-20-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+## Spurious groups
+
+BCA of random data with a high number of variables
+
+&lt;img src="fig/unnamed-chunk-21-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+## Spurious groups
+
+* Perform permutation test even if segregation of groups is clear on the factorial map
+* Cross-validation to display results
+
+
+```r
+s.class(loocv(bca.spurious)$XValCoord, fac, col = TRUE,
+    star = 0, ell = 0, chull = 1, main = "50 ind x 100 var CV")
+```
+
+&lt;img src="fig/unnamed-chunk-22-1.svg" width="40%" style="display: block; margin: auto;" /&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
