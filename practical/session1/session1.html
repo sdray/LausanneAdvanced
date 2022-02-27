@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Methods partitioning individuals</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2022-02-27" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Methods partitioning individuals
+## in practice
+### Stéphane Dray
+### 2022-02-27
+
+---
+
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+## Strategies of decomposition
+
+&lt;img src="img/between-decomposition.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+* Within-class analysis focuses on `\(\mb{X}_W\)`
+* Between-class analysis focuses on `\(\mb{X}_B\)` maximizing `\(B\)`
+* Discriminant analysis focuses on `\(\mb{X}_B\)` maximizing `\(B/T\)`
+
+---
+## Within-Class Analysis
+
+---
+## Perform the analysis
+
+
+```r
+library(ade4)
+library(adegraphics)
+data(meau)
+pca_env &lt;- dudi.pca(meau$env, scannf = FALSE)
+*wca.season &lt;- wca(pca_env, meau$design$season, scannf = FALSE)
+```
+
+---
+## Have a look to the summary
+
+```r
+summary(wca.season)
+```
+
+```
+## Within-class analysis
+## 
+## Class: within dudi
+## Call: wca.dudi(x = pca_env, fac = meau$design$season, scannf = FALSE)
+## 
+## Total inertia: 6.814
+## 
+## Eigenvalues:
+##     Ax1     Ax2     Ax3     Ax4     Ax5 
+##  4.6505  0.8701  0.5565  0.3900  0.2055 
+## 
+## Projected inertia (%):
+##     Ax1     Ax2     Ax3     Ax4     Ax5 
+##  68.248  12.769   8.167   5.724   3.015 
+## 
+...
+```
+---
+## Plot the results
+
+
+```r
+g1 &lt;- plot(wca.season)
+```
+
+&lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g1)
+```
+
+```
+## [1] "loadings" "col"      "eig"      "row"      "Xax"      "ccrow"
+```
+---
+## Loadings for variables
+
+
+```r
+g1$loadings
+```
+
+&lt;img src="fig/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" /&gt;
+
+  `\(\mb{A}\)`: coefficients (loadings) for the variables of `\(\mb{X}_W\)` (`wca.season$c1`)
+---
+## Scores for individuals
+
+.pull-left[
+
+```r
+g1$ccrow
+```
+
+&lt;img src="fig/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}_W\mb{QA}\)`: scores of individuals (`wca.season$li`)
+]
+
+.pull-right[
+
+```r
+g1$row
+```
+
+&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}\mb{QA}\)`: projections of individuals (`wca.season$ls`)
+
+]
+---
+## Between-Class Analysis
+
+## Perform the analysis
+
+
+```r
+*bca.season &lt;- bca(pca_env, meau$design$season, scannf = FALSE)
+```
+
+---
+
+## Test the significance of the link
+.pull-left[
+
+```r
+rt.bca &lt;- randtest(bca.season)
+plot(rt.bca)
+```
+
+&lt;img src="fig/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+```r
+rt.bca
+```
+
+```
+## Monte-Carlo test
+## Call: randtest.between(xtest = bca.season)
+## 
+## Observation: 0.3185858 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.002 
+## Alternative hypothesis: greater 
+## 
+##     Std.Obs Expectation    Variance 
+## 3.684344156 0.129950214 0.002621361
+```
+]
+
+---
+## Have a look to the summary
+
+```r
+summary(bca.season)
+```
+
+```
+## Between-class analysis
+## 
+## Class: between dudi
+## Call: bca.dudi(x = pca_env, fac = meau$design$season, scannf = FALSE)
+## 
+## Total inertia: 3.186
+## 
+## Eigenvalues:
+##     Ax1     Ax2     Ax3 
+##  1.5551  1.0390  0.5918 
+## 
+## Projected inertia (%):
+##     Ax1     Ax2     Ax3 
+##   48.81   32.61   18.57 
+## 
+...
+```
+---
+## Plot the results
+
+
+```r
+g1 &lt;- plot(bca.season)
+```
+
+&lt;img src="fig/unnamed-chunk-13-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g1)
+```
+
+```
+## [1] "loadings" "col"      "eig"      "row"      "Xax"      "class"
+```
+---
+## Loadings for variables
+
+
+```r
+g1$loadings
+```
+
+&lt;img src="fig/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" /&gt;
+
+  `\(\mb{A}\)`: coefficients (loadings) for the variables of `\(\mb{X}_B\)` (`bca.season$c1`)
+---
+## Scores for individuals and classes
+
+.pull-left[
+
+```r
+g1$class
+```
+
+&lt;img src="fig/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}_B\mb{QA}\)`: scores of classes (`bca.season$li`)
+]
+
+.pull-right[
+
+```r
+g1$row
+```
+
+&lt;img src="fig/unnamed-chunk-16-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}\mb{QA}\)`: projections of individuals (`bca.season$ls`)
+
+]
+
+---
+## Cross-validation
+
+
+```r
+xval &lt;- loocv(bca.season)
+s.class(xval$XValCoord, meau$design$season, col = TRUE,
+    star = 0, ell = 0, chull = 1)
+```
+
+&lt;img src="fig/unnamed-chunk-17-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+## Discriminant Analysis
+
+
+## Perform the analysis
+
+
+```r
+dis.season &lt;- discrimin(pca_env, meau$design$season,
+*   scannf = FALSE)
+```
+
+---
+
+## Test the significance of the link
+.pull-left[
+
+```r
+rt.dis &lt;- randtest(dis.season)
+plot(rt.dis)
+```
+
+&lt;img src="fig/unnamed-chunk-19-1.svg" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+```r
+rt.dis
+```
+
+```
+## Monte-Carlo test
+## Call: randtest.discrimin(xtest = dis.season)
+## 
+## Observation: 0.2551751 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.001 
+## Alternative hypothesis: greater 
+## 
+##      Std.Obs  Expectation     Variance 
+## 5.5340750209 0.1317414470 0.0004974813
+```
+]
+
+---
+## Plot the results
+
+
+```r
+g1 &lt;- plot(dis.season)
+```
+
+&lt;img src="fig/unnamed-chunk-21-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g1)
+```
+
+```
+## [1] "loadings" "col"      "eig"      "row"      "Xax"      "class"
+```
+---
+## Loadings for variables
+
+
+```r
+g1$loadings
+```
+
+&lt;img src="fig/unnamed-chunk-22-1.svg" style="display: block; margin: auto;" /&gt;
+
+  `\(\mb{A}^*\)`: coefficients (loadings) for the variables of `\(\mb{X}_B\)` (`dis.season$fa`) with the constraint that `\(\sqnorm{\mb{XA}^*}{\mb{D}} = 1\)`
+---
+## Scores for individuals and classes
+
+.pull-left[
+
+```r
+g1$class
+```
+
+&lt;img src="fig/unnamed-chunk-23-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}_B\mb{A}^*\)`: scores of classes (`dis.season$gc`)
+]
+
+.pull-right[
+
+```r
+g1$row
+```
+
+&lt;img src="fig/unnamed-chunk-24-1.svg" style="display: block; margin: auto;" /&gt;
+
+`\(\mathbf{X}\mb{A}^*\)`: scores of individuals (`dis.season$li`)
+
+]
+
+---
+
+## Your turn
+1. Create a Rmd or a R file
+2. Create two tables or random numbers (`rnorm`) with 50 individuals and either 10 or 200 variables
+3. Create a factor separating the individuals in 5 groups of 10 individuals (`gl`)
+4. Perform the the between-class analyses of the two tables
+5. Look at the outputs and compare the results
+6. Display cross-validated maps
+7. Interpret
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
