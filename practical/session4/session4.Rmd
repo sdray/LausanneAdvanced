@@ -1,0 +1,227 @@
+---
+title: "Spatial multivariate methods"
+subtitle: "in practice"  
+author: "Stéphane Dray"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [custom.css, xaringan-themer.css]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, width = 72)
+knitr::opts_chunk$set(tidy=TRUE, tidy.opts=list(width.cutoff=50), fig.height= 4, fig.width=4, dev='svg', fig.align="center", fig.path = "fig/")
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+duo(primary_color = "#1F4257", secondary_color = "#F97B64")
+```
+
+```{r include = FALSE}
+library(knitr)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+``` 
+$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$
+
+$$\newcommand{\mb}[1]{\mathbf{#1}}$$
+
+$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$
+
+$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$
+
+
+---
+## Spatial data in R
+
+Several packages allows to deal with spatial objects in R.
+
+* The package `sp` provides classes to manage spatial objects with or without data
+
+* Spatial weighting matrices can be defined and managed with `spdep`
+
+* Spatial multivariate methods are implemented in `adespatial`
+
+* Spatial objects can be used as arguments in `adegraphics` functions  to create maps
+
+```{r, message = FALSE}
+library(ade4) ; library(adegraphics) ; library(adespatial) ; library(spdep)
+```
+
+
+---
+
+## `adespatial`
+
+A package for spatial multivariate analysis interfacing `ade4` and `spdep`
+
+More details in the vignette:
+
+https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html
+
+or
+
+```{r, eval = FALSE}
+vignette("tutorial", package = "adespatial")
+```
+
+---
+
+## Spatial data
+
+* Classes are provide in R to deal with spatial data (raster, polygons, lines, points)
+
+* We will use implementations in `sp` package but it will be replaced by `sf` in the future
+
+* Import/export functions allows to interface with GIS software
+
+* Spatial proximities are managed by `spdep` functionalities
+
+---
+
+## Spatial weighting matrix
+
+A two-step procedure:
+
+* define a binary neighboring matrix (`nb` object)
+
+* consider optional non-binary weights and standardization to define a spatial weighting matrix (`listw` object)
+
+```{r, out.width="40%"}
+data(mafragh)
+lw <- nb2listw(mafragh$nb)
+s.label(mafragh$xy, plabel.cex = 0, Sp = mafragh$Spatial.contour, nb = mafragh$nb)
+```
+
+---
+
+## Spatial mapping
+
+```{r}
+s.value(mafragh$xy, mafragh$flo[,1:4], method="size", symbol = "circle", Sp = mafragh$Spatial.contour)
+```
+
+---
+
+## Spatial autocorrelation
+
+Compute Moran's index for the five first species:
+```{r}
+moran.randtest(mafragh$flo[,1:5], lw)
+```
+
+
+---
+
+## Multispati
+### Perform the analysis
+
+```{r}
+pca_veg <- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE)
+ms_veg <- multispati(pca_veg, lw, scannf = FALSE) #<<
+
+```
+
+---
+## Have a look to the summary
+```{r, output.lines = 15}
+summary(ms_veg)
+```
+---
+
+## Plot the results
+
+```{r, fig.width = 3.5, fig.height=3.5}
+g1 <- plot(ms_veg)
+names(g1)
+```
+---
+## Loadings for variables
+
+```{r, fig.width=3, fig.height=3}
+g1$loadings
+```
+
+  $\mb{A}^*$: coefficients (loadings) for the variables of $\mb{X}$ (`ms_veg$c1`)
+---
+## Scores for individuals and lagged scores
+
+```{r, fig.width = 3.5, fig.height=3.5}
+g1$row
+```
+mem_sub
+* $\mathbf{XQ}\mb{A}$: scores of individuals (`ms_veg$li`)
+* $\mathbf{WXQ}\mb{A}$: lagged scores (`ms_veg$ls`)
+
+---
+
+## Moran's Eigenvectors Maps
+
+```{r}
+me <- mem(lw)
+s.value(mafragh$xy, me[,1:4], Sp = mafragh$Spatial.contour)
+```
+
+---
+### Variable selection
+  
+```{r, cache=TRUE, }
+mem_sub <- mem.select(mafragh$flo, lw)  
+mem_sub$summary
+```
+
+---
+### Spatial RDA
+
+```{r}
+rda_spat <- pcaiv(pca_veg, mem_sub$MEM.select, scannf = FALSE)
+plot(rda_spat)
+```
+
+---
+
+### Variation partitioning
+
+```{r}
+varipart(pca_veg$tab, mem_sub$MEM.select, mafragh$env)
+```
+
+---
+
+## Your turn
+1. Create a Rmd or a R file
+2. Load the `irishdata` data set from `ade4`
+3. See `?irishdata` for details
+4. Perform a PCA on the data table `irishdata$tab`
+5. Define a spatial weighting matrix from `irishdata$Spatial` using `poly2nb`
+6. Compute Moran's index of autocorrelation for the PCA scores
+7. Perform MULTISPATI analysis
+6. Interpret
