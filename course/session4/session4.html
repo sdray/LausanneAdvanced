@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Training in ade4 in R - Module II: Advanced methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2022-02-27" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Training in ade4 in R - Module II: Advanced methods
+## Spatial Multivariate Analysis
+### Stéphane Dray
+### 2022-02-27
+
+---
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+class:
+# Introduction
+
+```r
+library(ade4)
+library(adegraphics)
+adegpar(background.col = "lightgrey")
+```
+
+```
+## list()
+```
+
+```r
+data(mafragh)
+names(mafragh)
+```
+
+```
+##  [1] "xy"              "flo"             "neig"            "env"             "partition"      
+##  [6] "area"            "tre"             "traits"          "nb"              "Spatial"        
+## [11] "spenames"        "Spatial.contour"
+```
+* Species table (`flo`): abundance indexes of 56 plant species recorded for 97 sites in the Mafragh plain (Algeria)
+
+* Spatial coordinates for the sites (`xy`)
+---
+# Introduction
+.pull-left[
+.center[
+![alt text](img/onetable.png)
+]
+
+
+One table with *p* variables measured on *n* individuals
+
+* quantitative (`dudi.pca`)
+* categorical (`dudi.coa` or `dudi.acm`)
+* both (`dudi.mix` or `dudi.hillsmith`)
+]
+.pull-right[
+Describe the information contained in the table:
+
+* Identify which variables are the most linked
+
+* Identify the differences/similarities between individuals
+]
+
+---
+
+```r
+pca_veg &lt;- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE)
+biplot(pca_veg, ppoints.col = "blue", row.plabel.cex = 0,
+    posieig = "none")
+```
+
+&lt;img src="fig/01acp-1.svg" width="50%" style="display: block; margin: auto;" /&gt;
+
+--
+.center[
+### Is community composition spatially structured?
+]
+
+---
+## One table and spatial information
+
+.pull-left[
+
+![alt text](img/Xspat.png)
+
+
+One table with *p* variables measured on *n* individuals
+
+One table with spatial coordinates for the same *n* individuals
+
+]
+.pull-right[
+* Identify spatial patterns
+* Identify which variables are spatially structred
+* Identify at which scales these spatial patterns occur
+
+]
+
+--
+
+.center[
+
+**But how?**
+
+]
+
+---
+# Indirect approaches
+
+.pull-left[
+.center[
+
+![alt text](img/X.png)
+
+Summarize by a simple ordination method
+
+&lt;img src="fig/unnamed-chunk-1-1.svg" width="50%" style="display: block; margin: auto;" /&gt;
+
+]
+]
+
+--
+
+.pull-right[
+
+and detect spatial structures using simple tools
+
+* Mapping
+* Regression on spatial predictors (polynomials, MEM)
+* Spatial autocorrelation 
+]
+
+---
+
+## Spatial mapping
+
+
+```r
+s.value(mafragh$xy, pca_veg$li)
+```
+
+&lt;img src="fig/unnamed-chunk-2-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Correlation with spatial predictors
+
+
+```r
+poly.xy &lt;- poly(as.matrix(mafragh$xy),
+    degree = 2)
+s.value(mafragh$xy, poly.xy)
+```
+
+&lt;img src="fig/unnamed-chunk-3-1.svg" width="45%" style="display: block; margin: auto;" /&gt;
+
+```r
+cor(pca_veg$li, poly.xy)
+```
+
+```
+##              1.0        2.0         0.1         1.1        0.2
+## Axis1 -0.2866398 0.30645089  0.40249089 -0.03318448 -0.1706804
+## Axis2  0.5047664 0.01762275 -0.08345049  0.25974753 -0.3269496
+```
+
+---
+
+# Introducing spatial information in multivariate methods
+
+.pull-left[
+Need of direct and explicit spatial multivariate methods
+.center[
+![alt text](img/Xspat2.png)
+]
+]
+
+.pull-right[
+Spatial information :
+
+* **symmetric** ( `\(n \times n\)` )
+  * Distances matrix
+  * Spatial weighting matrix
+  
+* **raw data** ( `\(n \times p\)` )
+  * (Polynomials of) Geographic coordinates
+  * Spatial eigenvectors (MEM)
+]
+
+---
+## Space as distances
+
+.pull-left[
+* Compute spatial distances `\(\mb{D_S}\)`
+* Compute faunistic distances `\(\mb{D_X}\)`
+* Study their link
+
+
+```r
+dx &lt;- dist(mafragh$flo)
+ds &lt;- dist(mafragh$xy)
+plot(dx ~ ds)
+```
+
+&lt;img src="fig/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+```r
+mantel.randtest(dx, ds)
+```
+
+```
+## Monte-Carlo test
+## Call: mantel.randtest(m1 = dx, m2 = ds)
+## 
+## Observation: 0.2327358 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.001 
+## Alternative hypothesis: greater 
+## 
+##      Std.Obs  Expectation     Variance 
+## 8.1363398973 0.0002936816 0.0008161525
+```
+
+]
+
+---
+## Spatial Weighting Matrix
+
+.pull-left[
+
+$$ \mb{W}=[w_{ij}] $$
+
+
+`$$w_{ij} = 1 \textrm{ if sites } i \textrm{ and } j \textrm{ are neighbors}$$` 
+`$$w_{ij} = 1 \textrm{ otherwise}$$`
+
+Options:
+
+* Non-binary weights
+* Standardization 
+
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Spatial autocorrelation
+
+Moran's index
+
+`$$MC(\mathbf{x}) = \frac{n\sum\nolimits_{\left( 2 \right)} {w_{ij} (x_i -\bar 
+{x})(x_j -\bar {x})} }{\sum\nolimits_{\left( 2 \right)} {w_{ij} } 
+\sum\nolimits_{i = 1}^n {(x_i -\bar {x})^2} }\mbox{ where 
+}\sum\nolimits_{\left( 2 \right)} =\sum\limits_{i = 1}^n {\sum\limits_{j = 1}^n 
+} \mbox{ with }i\ne j$$`
+
+In matrix notation
+
+`$$MC(\mathbf{x}) = \frac{n}{\mathbf{1}\tr\mathbf{W1}}\frac{\mathbf{z}\tr{\mathbf{Wz}}}{\mathbf{z}\tr\mathbf{z}}$$`
+where `\(\mb{z} = \mb{x} - \bar{x}\)` . With row-standardization 
+
+`$$MC(\mathbf{x}) = \frac{\mathbf{z}\tr{\mathbf{\tilde{z}}}}{\mathbf{z}\tr\mathbf{z}}$$`
+It is a measure of the link between the original variable ( `\(\mb{z}\)` ) and its lagged version ( `\(\tilde{\mb{z}}\)` )
+---
+## Moran's index and scatterplot
+
+.pull-left[
+
+```r
+library(adespatial)
+library(spdep)
+s.value(mafragh$xy, pca_veg$li[, 1])
+```
+
+&lt;img src="fig/unnamed-chunk-7-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+```r
+moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
+```
+
+```
+## Monte-Carlo test
+## Call: moran.randtest(x = pca_veg$li[, 1], listw = nb2listw(mafragh$nb))
+## 
+## Observation: 0.4947964 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.001 
+## Alternative hypothesis: greater 
+## 
+## Std.Obs.statistic       Expectation          Variance 
+##       8.412619155      -0.014339917       0.003662737
+```
+
+]
+
+---
+## Moran's index and scatterplot
+
+.pull-left[
+
+```r
+moran.plot(pca_veg$li[, 1], nb2listw(mafragh$nb))
+```
+
+&lt;img src="fig/unnamed-chunk-9-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+```r
+moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
+```
+
+```
+## Monte-Carlo test
+## Call: moran.randtest(x = pca_veg$li[, 1], listw = nb2listw(mafragh$nb))
+## 
+## Observation: 0.4947964 
+## 
+## Based on 999 replicates
+## Simulated p-value: 0.001 
+## Alternative hypothesis: greater 
+## 
+## Std.Obs.statistic       Expectation          Variance 
+##       7.736639542      -0.005349957       0.004179165
+```
+
+]
+
+---
+
+## Moran's Eigenvector Maps
+.pull-left[
+
+* Eigenvectors of the doubly-centred spatial weighting matrix
+
+* Orthogonal vectors maximizing the spatial autocorrelation
+
+* They can be used as spatial predictors in correlation or regression models (e.g., scalogram)
+]
+
+.pull-right[
+
+&lt;img src="fig/unnamed-chunk-11-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="fig/unnamed-chunk-12-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Spatial multivariate methods
+
+* **MULTISPATI** integrates a spatial weighting matrix in standard multivariate methods. It identifies spatial structures instead of structures. 
+* **MEM-based models** introduces spatial predictors in correlation or regression-based approaches (e.g., redundancy analysis, variation partitioning) 
+---
+
+## Multispati
+
+This analysis maximizes the product 
+
+`$$MC_\mathbf{D}(\mathbf{XQa}) \cdot \sqnorm{\mathbf{X}\mathbf{Q}\mathbf{a}}{\mathbf{D}}$$`
+and thus finds a linear combination of variables maximizing a compromise between:
+
+* the criteria optmized in the standard analysis ( `\(\sqnorm{\mathbf{X}\mathbf{Q}\mathbf{a}}{\mathbf{D}}\)` ) 
+
+* spatial autocorrelation ( `\(MC_\mathbf{D}(\mathbf{XQa})\)` )
+
+It corresponds to a coinertia analysis between the original table `\(\mb{X}\)` and its lagged version `\(\tilde{\mb{X}}=\mb{WX}\)`.
+---
+
+## MEM-based models
+
+Spatial eigenvectors can be used as predictors in regression models (e.g., redundancy analysis)
+
+* As there is a high number of predictors, variable selection should be preformed prior to the analysis
+
+* When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
