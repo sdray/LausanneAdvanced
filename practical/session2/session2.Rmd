@@ -280,7 +280,7 @@ correlation with the variables of $\mb{X}$ (`rda1$cor`)
 ]
 ---
 ## Your turn
-1. Create an Rmd file
+1. Create a Rmd or a R file
 2. Load the `rpjdl` data set from `ade4`
 3. See `?rpjdl` for details
 4. Perform a simple analysis on faunistic data and interpret (either `dudi.pca` or `dudi.coa`)
