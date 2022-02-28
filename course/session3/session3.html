@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Training in ade4 in R - Module II: Advanced methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2022-02-28" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Training in ade4 in R - Module II: Advanced methods
+## K-table methods
+### Stéphane Dray
+### 2022-02-28
+
+---
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+# Introduction
+
+We consider situations involving the analysis of multiple tables. This data structure encompasses the following cases: 
+
+.column-left[
+.center[
+![alt text](img/ktabrow.png)
+]
+*K* tables with different variables measured on the same *n* individuals
+]
+.column-center[
+.center[
+![alt text](img/ktabcol.png)
+]
+*K* tables with the same *p* variables measured on different individuals
+]
+.column-right[
+.center[
+![alt text](img/ktabcube.png)
+]
+*K* tables with the same *p* variables measured on the same *n* individuals
+]
+
+---
+
+## Example: `jv73`
+
+.pull-left[
+* Measurements of 12 physico-chemical variables for 92 sites
+
+* The sites belong to 12 rivers
+
+]
+
+.pull-right[
+.center[![alt text](img/ktabcol.png)]
+]
+
+**Is the typology of variables (physico-chemical gradients) similar in all rivers?**
+
+---
+
+## Example: `friday87`
+
+.pull-left[
+* Abundance of 91 macro-invertebrate species sampled 16 ponds
+
+* The species are grouped in 10 taxonomic groups (Hemiptera, Trichoptera, ...)
+
+
+]
+
+.pull-right[
+.center[![alt text](img/ktabrow.png)]
+]
+
+**Is the typology of sites (similarities in community composition) identical for all taxonomic groups?**
+
+---
+
+
+## Example: `meaudret`
+
+.pull-left[
+* Measurements of 10 physico-chemical variables for 5 sites
+
+* Each table corresponds to a date (season)
+
+]
+
+.pull-right[
+.center[![alt text](img/ktabcube.png)]
+]
+
+**Is the typology of sites (similarities in physico-chemical aspects) identical for all dates?**
+
+**Are the temporal patterns (similarities in physico-chemical aspects) identical for all sites?**
+
+---
+
+
+## Example: `bf88`
+
+.pull-left[
+* Abundance of 70 bird species in 4 regions
+
+* Each table corresponds to a vegetation stage along a gradient of 6 (open → closed habitat)
+
+
+]
+
+.pull-right[
+.center[![alt text](img/ktabcube.png)]
+]
+
+**Is the typology of vegetation stages (community composition) identical for all regions?**
+
+**Are the regional differences in community composition identical for all stages?**
+
+
+---
+
+
+
+# K-table methods
+
+Simultaneous analysis of several tables preserving the multiblock design of the data. It allows to:
+
+* Identify a common structure to all tables (blocks)
+* Identify similarities/differences between tables
+
+  `\(\rightarrow\)` based on the common dimension (either variables or individuals)
+
+* Identify which variables are involved in the structures
+* Identify which individuals are involved in the structures
+
+---
+
+## General principles
+
+* (Step 0: Define cross-product matrices to obtain matrices with same dimensions)  
+
+* Step 1: Define an "average table"  (common table for MFA)
+
+* Step 2: Analysis of this table to describe the common structure 
+
+* Step 3: Project each table and its rows and columns on the common structure
+
+---
+
+## Different alternatives
+
+* **Partial Triadic Analysis** is restrictred to data cubes where all tables
+have the same individuals and variables
+
+* **Multiple Factor Analysis** is restricted to K-tables with at least the
+same individuals
+
+* **Multiple Co-Inertia Analysis** is restricted to K-tables with
+at least the same individuals
+
+* **STATIS** allows to deal with K-tables with at least the
+same individuals (STATIS on WD) or at least the same variables (STATIS
+on VQ)
+
+---
+
+# STATIS 
+
+This method is very flexible and allows to deal with the three different types of K-tables. It consists in 3 main steps:
+
+* **The interstructure** is the analysis of the relations between the individual data sets
+* **The compromise** consists in deriving an optimal set of weights from the interstructure to compute the best common representation of the data sets. This consists in performing the PCA of a consensus table 
+* **The intrastructure** consists in studying the variation of the different data sets relative to the compromise structure
+---
+
+## RV coefficient
+
+It measures the link between two tables. It varies between 0 and 1. If the tables have the same rows, we have:
+
+`$$RV(\mb{X}_k,\mb{X}_l)=\frac{COVV(\mb{X}_k,\mb{X}_l)}{\sqrt{VAV(\mb{X}_k)}\sqrt{VAV(\mb{X}_l)}}$$`
+where the vectorial covariance is 
+
+`$$COVV(\mb{X}_k,\mb{X}_l) = Trace(\mb{X}_k\mb{Q}_k \mb{X}_k\tr \mb{D} \mb{X}_l \mb{Q}_l\mb{X}_l\tr \mb{D})=Trace(\mb{W}_k\mb{D} \mb{W}_l \mb{D})$$`
+and the vectorial variance is 
+
+`$$VAV(\mb{X}_k) = Trace(\mb{X}_k\mb{Q}_k \mb{X}_k\tr \mb{D} \mb{X}_k \mb{Q}_k\mb{X}_k\tr \mb{D})= Trace(\mb{W}_k\mb{D} \mb{W}_k \mb{D})$$`
+
+---
+
+## The interstructure
+
+It consists in the diagonalization of the `\(K \times K\)` matrix of RV coefficients
+
+&lt;img src="fig/unnamed-chunk-1-1.svg" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## The compromise
+
+Let `\(\mb{\alpha}\tr=(\alpha_1 \, \dots \, \alpha_k \, \dots \, \alpha_K)\)` be the first eigenvector of the Interstructure. The Compromise is defined as
+
+`$$\sum_{k=1}^K \alpha_k \frac{\mb{W}_k\mb{D}}{\sqrt{VAV(\mb{X}_k)}}$$`
+
+Let `\(\mb{\Lambda}\)` and `\(\mb{U}\)` be the eigenvalues and the eigenvectors of `\(\mb{WD}\)` ( `\(\mb{U}\tr \mb{DU}=\mb{I}\)` ). The coordinates of individuals on the compromise are given by `\(\mb{L}=\mb{WDU}\mb{\Lambda}^{\frac{1}{2}}\)`. 
+
+&lt;img src="fig/unnamed-chunk-2-1.svg" width="35%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## The intrastructure
+
+* Variables of each table `\(\mb{X}_k\)` are represented by the scores `\(\mb{C}_k= \mb{X}_k\tr \mb{DU}\)`.\\
+* Individuals of each table are repesented by `\(\mb{L}_k=\mb{W}_k \mb{DU}\mb{\Lambda}^{\frac{1}{2}}\)`.  
+
+
+&lt;img src="fig/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
