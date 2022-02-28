@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>K-table methods</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stéphane Dray" />
+    <meta name="date" content="2022-02-28" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# K-table methods
+## in practice
+### Stéphane Dray
+### 2022-02-28
+
+---
+
+
+
+
+
+
+
+`$$\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} % transpose d'une matrice$$`
+
+`$$\newcommand{\mb}[1]{\mathbf{#1}}$$`
+
+`$$\newcommand{\sqnorm}[2]{
+ \left \|  #1  \right \|^2_{#2}
+}$$`
+
+`$$\newcommand{\norm}[2]{
+ \left \| #1 \right \|_{#2}
+}$$`
+
+
+---
+
+# Data structure
+
+.column-left[
+.center[
+![alt text](img/ktabrow.png)
+]
+]
+.column-center[
+.center[
+![alt text](img/ktabcol.png)
+]
+]
+.column-right[
+.center[
+![alt text](img/ktabcube.png)
+]
+]
+
+* K-tables are stored in objects of class ktab. It is a list of dataframes that share the same row names
+* If the common dimension of the tables is the columns, they must be transposed
+---
+
+## The `ktab` class
+
+It is a list of data frames with the additional components:
+
+* `lw`: row weights, common to all the tables (vector)
+* `cw`: column weights (vector)
+* `blo`: number of columns of each table (vector)
+* `TL`: index for rows (data frame containing table names and row names)
+* `TC`: index for columns (data frame containing table names and column
+names)
+* `T4`: index for 4 elements of an array (data frame containing table names
+and an index varying from 1 to 4), mainly for internal use
+* `call`: function call
+
+---
+
+## Building a `ktab`
+
+Four alternative can be used to build a `ktab` object from different types of arguments:
+
+* `ktab.list.df`: a list of data frames with the same rows
+* `ktab.list.dudi`: a list of `dudi` objects with the same rows
+* `ktab.within`: an object created by a `wca` analysis
+* `ktab.data.frame`: a data frame that should be splitted by columns and a vector indicating the number of columns in each table
+
+---
+
+## Managing `ktab` objects
+
+* `c`: concatenates several ktab objects 
+* `[`: selects row, column or tables in a ktab
+* `t`: transposes all the tables of a ktab (tables must have the same column names and weights)
+* `is.ktab`: test if an object is of the class ktab
+* `row.names`: returns or modifies the vector of row names shared by all the tables
+* `col.names`: returns or modifies the vector of column names
+* `tab.names`: returns or modifies the vector of table names
+* `ktab.util.names`: automatically builds unique row, column and tab name
+
+---
+
+# Available methods
+
+Various methods are implemented in `ade4`:
+
+* `sepan`: separate analysis
+
+* `pta`: partial triadic analysis
+
+* `foucart`: Foucart analysis
+
+* `mfa`: multiple factor analysis
+
+* `mcoa`: multiple coinertia analysis
+
+* `statis`: STATIS analysis
+
+---
+## Separate Analyses
+
+After building the `ktab` object, separate analyses can be performed
+
+
+```r
+library(ade4)
+library(adegraphics)
+data(friday87)
+df &lt;- data.frame(scalewt(friday87$fau, scale = FALSE))
+kta &lt;- ktab.data.frame(df, friday87$fau.blo, tabnames = friday87$tab.names)
+*sepan_fri &lt;- sepan(kta)
+```
+
+---
+
+### Display the results
+
+
+```r
+kplot(sepan_fri)
+```
+
+&lt;img src="fig/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## STATIS
+
+To study the common structure, STATIS can be used. The three steps of the analysis are performed by the `statis` function 
+
+
+```r
+*statis_fri &lt;- statis(kta, scannf = FALSE)
+```
+
+
+---
+
+### Display the results
+
+
+```r
+g1 &lt;- plot(statis_fri)
+```
+
+&lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+
+```r
+names(g1)
+```
+
+```
+## [1] "inter" "typo"  "row"   "comp"
+```
+
+---
+
+### The interstructure
+
+
+```r
+g1$inter
+```
+
+&lt;img src="fig/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" /&gt;
+
+Eigenvectors and eigenvalues of the matrix of RV coefficients (`statis_fri$RV.coo` and `statis_fri$RV.eig`)
+
+---
+
+### The compromise
+
+
+```r
+g1$row
+```
+
+&lt;img src="fig/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+ 
+The coordinates of individuals of the compromise are given by `\(\mb{L}=\mb{WDU}\mb{\Lambda}^{\frac{1}{2}}\)`  (`statis_fri$C.li`)
+---
+
+### The intrastructure
+
+
+```r
+kplot(statis_fri, psub.cex = 1.5)
+```
+
+&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
+
+Variables of each table `\(\mb{X}_k\)` are represented by the scores `\(\mb{C}_k= \mb{X}_k\tr \mb{DU}\)` (`statis_fri$C.Co`)
+
+---
+
+### Your Turn
+
+1. Create a Rmd or a R file
+2. Load one data set from `ade4` that is presented in the course
+4. Create an object of the class `ktab` with appropriate function
+5. Perform separate analyses
+6. Use STATIS to study simultaneously all the tables
+7. Interpret
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
