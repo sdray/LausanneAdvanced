@@ -4,7 +4,7 @@
     <title>Spatial multivariate methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-27" />
+    <meta name="date" content="2022-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="custom.css" type="text/css" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Spatial multivariate methods
 ## in practice
 ### Stéphane Dray
-### 2022-02-27
+### 2022-02-28
 
 ---
 
@@ -142,11 +142,11 @@ moran.randtest(mafragh$flo[, 1:5], lw)
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
 ##   Test         Obs    Std.Obs   Alter Pvalue
-## 1  Sp1  0.33419967  6.6497300 greater  0.001
-## 2  Sp2  0.38260466  6.6293109 greater  0.001
-## 3  Sp3  0.16729450  3.0655234 greater  0.009
-## 4  Sp4 -0.03331651 -0.5273328 greater  0.917
-## 5  Sp5  0.06837558  1.3404464 greater  0.102
+## 1  Sp1  0.33419967  6.2600537 greater  0.001
+## 2  Sp2  0.38260466  6.4139654 greater  0.001
+## 3  Sp3  0.16729450  3.1375972 greater  0.005
+## 4  Sp4 -0.03331651 -0.5118008 greater  0.935
+## 5  Sp5  0.06837558  1.5826055 greater  0.081
 ```
 
 
@@ -246,7 +246,7 @@ mem_sub &lt;- mem.select(mafragh$flo, lw)
 ```
 
 ```
-## Procedure stopped (alpha criteria): pvalue for variable 15 is 0.061000 (&gt; 0.050000)
+## Procedure stopped (alpha criteria): pvalue for variable 14 is 0.051000 (&gt; 0.050000)
 ```
 
 ```r
@@ -259,16 +259,15 @@ mem_sub$summary
 ## 2       MEM4     4 0.05227241 0.14338396 0.1251581  0.001
 ## 3       MEM2     2 0.05057350 0.19395745 0.1679561  0.001
 ## 4       MEM5     5 0.03852474 0.23248219 0.1991119  0.001
-## 5      MEM11    11 0.02368647 0.25616866 0.2152988  0.004
-## 6       MEM3     3 0.02339942 0.27956808 0.2315393  0.005
-## 7       MEM7     7 0.02291725 0.30248533 0.2476246  0.003
+## 5      MEM11    11 0.02368647 0.25616866 0.2152988  0.005
+## 6       MEM3     3 0.02339942 0.27956808 0.2315393  0.003
+## 7       MEM7     7 0.02291725 0.30248533 0.2476246  0.002
 ## 8      MEM10    10 0.02175612 0.32424145 0.2628089  0.003
-## 9       MEM6     6 0.01692771 0.34116916 0.2730142  0.010
-## 10      MEM8     8 0.01560389 0.35677306 0.2819792  0.021
-## 11     MEM13    13 0.01530752 0.37208057 0.2908204  0.019
-## 12     MEM12    12 0.01412745 0.38620803 0.2985235  0.024
-## 13     MEM28    28 0.01390115 0.40010918 0.3061504  0.039
-## 14     MEM17    17 0.01232586 0.41243503 0.3121191  0.046
+## 9       MEM6     6 0.01692771 0.34116916 0.2730142  0.014
+## 10      MEM8     8 0.01560389 0.35677306 0.2819792  0.016
+## 11     MEM13    13 0.01530752 0.37208057 0.2908204  0.026
+## 12     MEM12    12 0.01412745 0.38620803 0.2985235  0.029
+## 13     MEM28    28 0.01390115 0.40010918 0.3061504  0.038
 ```
 
 ---
@@ -305,18 +304,18 @@ varipart(pca_veg$tab, mem_sub$MEM.select, mafragh$env)
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
 ##   Test       Obs   Std.Obs   Alter Pvalue
-## 1   ab 0.4124350 16.082381 greater  0.001
-## 2   bc 0.2366554  8.326983 greater  0.001
-## 3  abc 0.4934544 11.042058 greater  0.001
+## 1   ab 0.4001092 16.692070 greater  0.001
+## 2   bc 0.2366554  7.976584 greater  0.001
+## 3  abc 0.4851531 11.827304 greater  0.001
 ## 
 ## 
 ## Individual fractions:
 ##          a          b          c          d 
-## 0.25679906 0.15563597 0.08101941 0.50654555 
+## 0.24849774 0.15161144 0.08504395 0.51484688 
 ## 
 ## Adjusted fractions:
 ##           a           b           c           d 
-## 0.176912929 0.135147176 0.002331727 0.685608168
+## 0.176427966 0.129852278 0.007480408 0.686239348
 ```
 
 ---

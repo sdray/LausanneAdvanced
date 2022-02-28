@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-27" />
+    <meta name="date" content="2022-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Training in ade4 in R - Module II: Advanced methods
 ## Spatial Multivariate Analysis
 ### Stéphane Dray
-### 2022-02-27
+### 2022-02-28
 
 ---
 
@@ -57,9 +57,9 @@ names(mafragh)
 ```
 
 ```
-##  [1] "xy"              "flo"             "neig"            "env"             "partition"      
-##  [6] "area"            "tre"             "traits"          "nb"              "Spatial"        
-## [11] "spenames"        "Spatial.contour"
+##  [1] "xy"              "flo"             "neig"            "env"            
+##  [5] "partition"       "area"            "tre"             "traits"         
+##  [9] "nb"              "Spatial"         "spenames"        "Spatial.contour"
 ```
 * Species table (`flo`): abundance indexes of 56 plant species recorded for 97 sites in the Mafragh plain (Algeria)
 
@@ -248,7 +248,7 @@ mantel.randtest(dx, ds)
 ## Alternative hypothesis: greater 
 ## 
 ##      Std.Obs  Expectation     Variance 
-## 8.1363398973 0.0002936816 0.0008161525
+## 8.1460917683 0.0004854407 0.0008128567
 ```
 
 ]
@@ -327,7 +327,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       8.412619155      -0.014339917       0.003662737
+##       8.387562399      -0.014619096       0.003688696
 ```
 
 ]
@@ -362,7 +362,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       7.736639542      -0.005349957       0.004179165
+##       7.748020071      -0.005346483       0.004166839
 ```
 
 ]

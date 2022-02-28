@@ -81,7 +81,7 @@ library(ade4)
 library(adegraphics)
 data(meau)
 pca_env <- dudi.pca(meau$env, scannf = FALSE)
-wca.season <- wca(pca_env, meau$design$season, scannf = FALSE)#<<
+wca.season <- wca(pca_env, meau$design$season, scannf = FALSE) #<<
 ```
 
 ---
@@ -261,7 +261,7 @@ $\mathbf{X}\mb{A}^*$: scores of individuals (`dis.season$li`)
 1. Create a Rmd or a R file
 2. Create two tables or random numbers (`rnorm`) with 50 individuals and either 10 or 200 variables
 3. Create a factor separating the individuals in 5 groups of 10 individuals (`gl`)
-4. Perform the the between-class analyses of the two tables
+4. Perform the between-class analyses of the two tables
 5. Look at the outputs and compare the results
 6. Display cross-validated maps
 7. Interpret

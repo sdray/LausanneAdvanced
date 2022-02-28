@@ -1,0 +1,15 @@
+* Create a new repository on github
+
+* Go to the terminal and navigate to the local directory with the existing project (courseSkeleton)
+Now in the terminal type: 
+
+	git push git@github.com:sdray/INSAcourse.git +main:main
+where 
+	"master" - is the master branch in the new repository
+	"old-repo-branch"  is the branch that you want to use. In my case it was a master branch, so my command was +master:master
+
+* That's it! Now you can go ahead and clone it to your local folder. (create from existing in Rstudio)
+
+* Change the name of the Rproj and replace occurrences of the project name (Readme files).
+
+
