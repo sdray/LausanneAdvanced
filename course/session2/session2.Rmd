@@ -39,6 +39,11 @@ $$\newcommand{\norm}[2]{
 ---
 class:
 # Introduction
+
+```{r, include = FALSE}
+adeg <- adegpar()
+```
+
 ```{r 01intro, message = FALSE, size="tiny"}
 library(ade4)
 library(adegraphics)
@@ -333,3 +338,7 @@ The aim is to maximize the separation between the groups
 * `cancor`-like method is Discriminant Analysis (`ade4::discrimin`)
 
 * `pcaiv`-like method is Between-Class Analaysis (`ade4::bca`)
+
+```{r, include = FALSE}
+adegpar(adeg)
+```

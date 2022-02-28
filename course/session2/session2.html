@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-24" />
+    <meta name="date" content="2022-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Training in ade4 in R - Module II: Advanced methods
 ## Two-table methods
 ### Stéphane Dray
-### 2022-02-24
+### 2022-02-28
 
 ---
 
@@ -40,6 +40,9 @@ class: center, middle, inverse, title-slide
 ---
 class:
 # Introduction
+
+
+
 
 ```r
 library(ade4)
@@ -153,7 +156,7 @@ Identify what is the information common to both tables:
 
 Summarize by a simple ordination method
 
-&lt;img src="fig/unnamed-chunk-1-1.svg" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-2-1.svg" width="50%" style="display: block; margin: auto;" /&gt;
 
 ]
 ]
@@ -184,7 +187,7 @@ s.value(pca_fish$li,
     scale(doubs$env$dfs))
 ```
 
-&lt;img src="fig/unnamed-chunk-2-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-3-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -198,7 +201,7 @@ s1d.curve(pca_fish$li,
     at = doubs$env$dfs)
 ```
 
-&lt;img src="fig/unnamed-chunk-3-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-4-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
 
 ```r
 cor(pca_fish$li, doubs$env$dfs)
@@ -221,7 +224,7 @@ s.corcircle(cor(doubs$env,
     pca_fish$li))
 ```
 
-&lt;img src="fig/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 .pull-right[
 ### Regression
@@ -233,7 +236,7 @@ s.arrow(coefficients(lm1)[-1,
     ], labels = names(doubs$env))
 ```
 
-&lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -261,7 +264,7 @@ biplot(dudi.pca(conc, scannf = FALSE), col.plabel.col = rep(c(2,
     4), c(27, 11)))
 ```
 
-&lt;img src="fig/unnamed-chunk-6-1.svg" height="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-7-1.svg" height="70%" style="display: block; margin: auto;" /&gt;
 
 ---
 ## From two variables to two tables
@@ -325,7 +328,7 @@ coi &lt;- coinertia(pca_fish, pca_env, scannf = FALSE)
 plot(coi)
 ```
 
-&lt;img src="fig/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -334,7 +337,7 @@ rt.coi &lt;- randtest(coi)
 plot(rt.coi)
 ```
 
-&lt;img src="fig/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
 
 Try `summary(coi)`
 ---
@@ -363,7 +366,7 @@ rda1 &lt;- pcaiv(pca_fish, doubs$env, scannf = FALSE)
 plot(rda1)
 ```
 
-&lt;img src="fig/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -372,7 +375,7 @@ rt.rda &lt;- randtest(rda1)
 plot(rt.rda)
 ```
 
-&lt;img src="fig/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-11-1.svg" style="display: block; margin: auto;" /&gt;
 
 Try `summary(rda1)`
 
@@ -396,6 +399,8 @@ The aim is to maximize the separation between the groups
 * `cancor`-like method is Discriminant Analysis (`ade4::discrimin`)
 
 * `pcaiv`-like method is Between-Class Analaysis (`ade4::bca`)
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

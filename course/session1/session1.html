@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-24" />
+    <meta name="date" content="2022-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Training in ade4 in R - Module II: Advanced methods
 ## Analysis of one table and one categorical variable
 ### Stéphane Dray
-### 2022-02-24
+### 2022-02-28
 
 ---
 
@@ -41,6 +41,9 @@ class: center, middle, inverse, title-slide
 ---
 class:
 # Introduction
+
+
+
 
 ```r
 library(ade4)
@@ -139,7 +142,7 @@ biplot(pca_env, ppoints.col = "blue", row.plabel.cex = 0,
     posieig = "none")
 ```
 
-&lt;img src="fig/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 --
 .pull-right[
@@ -148,19 +151,6 @@ biplot(pca_env, ppoints.col = "blue", row.plabel.cex = 0,
 ### Which part is not explained by seasonal variation?
 ]
 ]
----
-# The univariate case 
-
-.pull-left[
-&lt;img src="fig/unnamed-chunk-4-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
-
-Total variation
-
-$$
-\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
-$$
-]
-
 ---
 # The univariate case 
 
@@ -174,17 +164,11 @@ $$
 $$
 ]
 
-.pull-right[
-&lt;img src="fig/unnamed-chunk-6-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
-
-Within-group variation
-`$$\sigma_i^2 = \frac{1}{n_i}\sum_{j=1}^{n_i}{(x_j-\bar x_i)^2}$$`
-]
 ---
 # The univariate case 
 
 .pull-left[
-&lt;img src="fig/unnamed-chunk-7-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-6-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
 
 Total variation
 
@@ -194,7 +178,26 @@ $$
 ]
 
 .pull-right[
+&lt;img src="fig/unnamed-chunk-7-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Within-group variation
+`$$\sigma_i^2 = \frac{1}{n_i}\sum_{j=1}^{n_i}{(x_j-\bar x_i)^2}$$`
+]
+---
+# The univariate case 
+
+.pull-left[
 &lt;img src="fig/unnamed-chunk-8-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Total variation
+
+$$
+\sigma^2 = \frac{1}{n}\sum_{i=1}^n{(x_i-\bar x)^2}
+$$
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-9-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
 
 Within-group variation
 
@@ -204,7 +207,7 @@ Within-group variation
 # The univariate case 
 
 .pull-left[
-&lt;img src="fig/unnamed-chunk-9-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-10-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
 
 Total variation
 
@@ -214,7 +217,7 @@ $$
 ]
 
 .pull-right[
-&lt;img src="fig/unnamed-chunk-10-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-11-1.svg" width="80%" style="display: block; margin: auto;" /&gt;
 
 Between-group variation
 
@@ -307,7 +310,7 @@ wca.season &lt;- wca(pca_env, meau$design$season, scannf = FALSE)
 biplot(wca.season)
 ```
 
-&lt;img src="fig/unnamed-chunk-12-1.svg" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-13-1.svg" width="30%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -335,11 +338,11 @@ biplot(wca.season)
 ## Two strategies
 
 .pull-left[
-&lt;img src="fig/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-16-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
-&lt;img src="fig/unnamed-chunk-16-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-17-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 * Principal component analysis maximizes T
@@ -369,18 +372,29 @@ bca(pca_env, meau$design$season, scannf = FALSE)
 ]
 
 ---
+## Between-Class and Discriminant Analysis
+
+.pull-left[
+&lt;img src="fig/unnamed-chunk-21-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="fig/unnamed-chunk-22-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
 ## Spurious groups
 
 BCA of random data with a moderate number of variables
 
-&lt;img src="fig/unnamed-chunk-20-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-23-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 ## Spurious groups
 
 BCA of random data with a high number of variables
 
-&lt;img src="fig/unnamed-chunk-21-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-24-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 ## Spurious groups
@@ -394,7 +408,8 @@ s.class(loocv(bca.spurious)$XValCoord, fac, col = TRUE,
     star = 0, ell = 0, chull = 1, main = "50 ind x 100 var CV")
 ```
 
-&lt;img src="fig/unnamed-chunk-22-1.svg" width="40%" style="display: block; margin: auto;" /&gt;
+&lt;img src="fig/unnamed-chunk-25-1.svg" width="40%" style="display: block; margin: auto;" /&gt;
+
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

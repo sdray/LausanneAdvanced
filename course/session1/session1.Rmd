@@ -40,6 +40,11 @@ $$\newcommand{\norm}[2]{
 ---
 class:
 # Introduction
+
+```{r, include = FALSE}
+adeg <- adegraphics::adegpar()
+```
+
 ```{r 01intro, message = FALSE, size="tiny"}
 library(ade4)
 library(adegraphics)
@@ -446,6 +451,64 @@ bca(pca_env, meau$design$season, scannf = FALSE)
 ]
 
 ---
+## Between-Class and Discriminant Analysis
+
+.pull-left[
+```{r, echo = FALSE}
+
+set.seed(24122006)
+library(MASS)
+x <- cbind.data.frame(x = rnorm(100, mean = c(1, -1), sd = 0.6), y = rnorm(100, mean = c(-2, 2), sd = 3))
+x <-scalewt(x,scale=F)
+fac <- factor(rep(1:2, 50))
+w <- dudi.pca(x,scal=F,scannf=F)
+wbet <- bca(w, fac, scannf=F)
+wdis <- discrimin(w,fac,scannf=F)
+
+f2 <- function(a,b) {
+        z <- a*x[,1]+b*x[,2]
+        a1 <- var(z)*99/100
+        a2 <- var(predict(lm(z~fac)))*99/100
+        a3 <- a2/a1
+        round(c(a1,a2,a3),3)
+}
+
+s.class(scalewt(x,scale=F),fac,col=c("#80b3ff", "#de8787"), starSize = 0)
+
+c1 <- wbet$c1[1,1]; c2<- wbet$c1[2,1]; c3 <- f2(c1,c2)
+art <- rbind(c(2*c1,2*c2))
+lab4 <- "B"
+provi <- wdis$fa/sqrt(sum(wdis$fa^2))
+c1 <- provi[1,1]; c2 <- provi[2,1]; c3 <- f2(c1,c2)
+art <- rbind(art, c(2*c1,2*c2))
+lab5 <- "B/T"
+labs <- c(lab4, lab5)
+s.arrow(art, labels=labs, add=TRUE, pline.lwd=2)
+
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+f1 <- function(a,b,cha) {
+    z <- a*x[,1]+b*x[,2]
+    z0 <- seq(-10,10,le=50)
+    z1 <- z[fac==1]
+    z2 <- z[fac==2]
+    hist(z, proba = TRUE, nclass = 10, col = grey(0.9),xlim=c(-10,10), main=cha)
+    lines(z0,dnorm(z0,mean(z),sd(z)),lwd=2)
+    lines(z0,0.5*dnorm(z0,mean(z1),sd(z1)),col="#80b3ff",lwd=2)
+    lines(z0,0.5*dnorm(z0,mean(z2),sd(z2)),col="#de8787",lwd=2)
+    
+}
+par(mfrow=c(2, 1), mar = c(2, 0, 3, 0))
+f1(wbet$c1[1,1], wbet$c1[2,1], "B (Between-Class Analysis)")
+provi <- wdis$fa/sqrt(sum(wdis$fa^2))
+f1(provi[1,1], provi[2,1],"B/T (Discriminant Analysis)")
+```
+]
+
+---
 ## Spurious groups
 
 BCA of random data with a moderate number of variables
@@ -478,3 +541,6 @@ s.class(bca.spurious$ls, fac, col = TRUE, star = 0, ell = 0, chull=1, main = "50
 s.class(loocv(bca.spurious)$XValCoord, fac, col = TRUE, star = 0, ell = 0, chull=1, main = "50 ind x 100 var CV")
 ```
 
+```{r, include = FALSE}
+adegpar(adeg)
+```
