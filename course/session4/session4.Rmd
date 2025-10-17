@@ -212,7 +212,7 @@ $$ \mb{W}=[w_{ij}] $$
 
 
 $$w_{ij} = 1 \textrm{ if sites } i \textrm{ and } j \textrm{ are neighbors}$$ 
-$$w_{ij} = 1 \textrm{ otherwise}$$
+$$w_{ij} = 0 \textrm{ otherwise}$$
 
 Options:
 
