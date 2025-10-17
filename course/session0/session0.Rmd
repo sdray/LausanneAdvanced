@@ -60,7 +60,7 @@ Online version at https://sdray.github.io/LausanneAdvanced
   - Multivariate methods
   - Graphical functions
 
-```{r, out.width="80%", echo = FALSE}
+```{r, out.width="100%", echo = FALSE}
 knitr::include_graphics("img/Fig-figCitade4.png")
 ```
 ---
@@ -394,6 +394,10 @@ genetic markers
 * `adephylo`: exploratory analyses for the phylogenetic comparative
 method
 * `ade4TkGUI`: graphical interface 
+
+Other packages for multivariate analysis
+* `vegan`: various tools devoted to ecology(diversity, dissimilarity), formulas, conditioning, variation partitioning
+* `FactoMineR`: structured data, missing data
 ---
 # ade4TkGUI
 
