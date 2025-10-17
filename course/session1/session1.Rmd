@@ -55,9 +55,9 @@ str(meau, max.level = 1)
 ```
 * Species table: abundance of 13 Ephemeroptera species recorded for 24 sites
 
-* Environmental table: 10 physicochemical variables for the same sites
+* Environmental table: 10 physico-chemical variables for the same sites
 
-* Expermiental design (6 sites and 4 seasons)
+* Experimental design (6 sites and 4 seasons)
 ---
 # Introduction
 
