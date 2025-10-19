@@ -4,7 +4,7 @@
     <title>K-table methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-28" />
+    <meta name="date" content="2025-10-19" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="custom.css" type="text/css" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
@@ -13,10 +13,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # K-table methods
+]
+.subtitle[
 ## in practice
+]
+.author[
 ### Stéphane Dray
-### 2022-02-28
+]
+.date[
+### 2025-10-19
+]
 
 ---
 
@@ -125,7 +133,7 @@ Various methods are implemented in `ade4`:
 After building the `ktab` object, separate analyses can be performed
 
 
-```r
+``` r
 library(ade4)
 library(adegraphics)
 data(friday87)
@@ -139,7 +147,7 @@ kta &lt;- ktab.data.frame(df, friday87$fau.blo, tabnames = friday87$tab.names)
 ### Display the results
 
 
-```r
+``` r
 kplot(sepan_fri)
 ```
 
@@ -152,7 +160,7 @@ kplot(sepan_fri)
 To study the common structure, STATIS can be used. The three steps of the analysis are performed by the `statis` function 
 
 
-```r
+``` r
 *statis_fri &lt;- statis(kta, scannf = FALSE)
 ```
 
@@ -162,13 +170,13 @@ To study the common structure, STATIS can be used. The three steps of the analys
 ### Display the results
 
 
-```r
+``` r
 g1 &lt;- plot(statis_fri)
 ```
 
 &lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 names(g1)
 ```
 
@@ -181,7 +189,7 @@ names(g1)
 ### The interstructure
 
 
-```r
+``` r
 g1$inter
 ```
 
@@ -194,7 +202,7 @@ Eigenvectors and eigenvalues of the matrix of RV coefficients (`statis_fri$RV.co
 ### The compromise
 
 
-```r
+``` r
 g1$row
 ```
 
@@ -206,7 +214,7 @@ The coordinates of individuals of the compromise are given by `\(\mb{L}=\mb{WDU}
 ### The intrastructure
 
 
-```r
+``` r
 kplot(statis_fri, psub.cex = 1.5)
 ```
 
@@ -228,9 +236,9 @@ Variables of each table `\(\mb{X}_k\)` are represented by the scores `\(\mb{C}_k
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -271,6 +279,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2025-10-18" />
+    <meta name="date" content="2025-10-19" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -22,7 +22,7 @@ class: center, middle, inverse, title-slide
 ### Stéphane Dray
 ]
 .date[
-### 2025-10-18
+### 2025-10-19
 ]
 
 ---
@@ -65,9 +65,10 @@ names(mafragh)
 ```
 
 ```
-##  [1] "xy"              "flo"             "env"             "partition"      
-##  [5] "area"            "tre"             "traits"          "nb"             
-##  [9] "Spatial"         "spenames"        "Spatial.contour"
+##  [1] "xy"              "flo"             "env"            
+##  [4] "partition"       "area"            "tre"            
+##  [7] "traits"          "nb"              "Spatial"        
+## [10] "spenames"        "Spatial.contour"
 ```
 * Species table (`flo`): abundance indexes of 56 plant species recorded for 97 sites in the Mafragh plain (Algeria)
 
@@ -255,8 +256,8 @@ mantel.randtest(dx, ds)
 ## Simulated p-value: 0.001 
 ## Alternative hypothesis: greater 
 ## 
-##      Std.Obs  Expectation     Variance 
-## 8.1788981348 0.0008067148 0.0008041196
+##       Std.Obs   Expectation      Variance 
+##  8.0283347374 -0.0008646799  0.0008466352
 ```
 
 ]
@@ -335,7 +336,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       7.885767676      -0.012439987       0.004137451
+##       8.383910406      -0.014727811       0.003693486
 ```
 
 ]
@@ -370,7 +371,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       8.238948605      -0.009435820       0.003745568
+##       7.741228586      -0.005461975       0.004176082
 ```
 
 ]
@@ -502,16 +503,15 @@ Spatial eigenvectors can be used as predictors in regression models (e.g., redun
 
 * When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table (variation partitioning).
 
-see [adespatial tutorial](https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html)
----
+* see [adespatial tutorial](https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html) for more details
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

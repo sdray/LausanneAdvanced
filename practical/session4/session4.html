@@ -4,7 +4,7 @@
     <title>Spatial multivariate methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-28" />
+    <meta name="date" content="2025-10-19" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="custom.css" type="text/css" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
@@ -13,10 +13,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Spatial multivariate methods
+]
+.subtitle[
 ## in practice
+]
+.author[
 ### Stéphane Dray
-### 2022-02-28
+]
+.date[
+### 2025-10-19
+]
 
 ---
 
@@ -53,7 +61,7 @@ Several packages allows to deal with spatial objects in R.
 * Spatial objects can be used as arguments in `adegraphics` functions  to create maps
 
 
-```r
+``` r
 library(ade4)
 library(adegraphics)
 library(adespatial)
@@ -74,7 +82,7 @@ https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html
 or
 
 
-```r
+``` r
 vignette("tutorial", package = "adespatial")
 ```
 
@@ -101,7 +109,7 @@ A two-step procedure:
 * consider optional non-binary weights and standardization to define a spatial weighting matrix (`listw` object)
 
 
-```r
+``` r
 data(mafragh)
 lw &lt;- nb2listw(mafragh$nb)
 s.label(mafragh$xy, plabel.cex = 0, Sp = mafragh$Spatial.contour,
@@ -115,7 +123,7 @@ s.label(mafragh$xy, plabel.cex = 0, Sp = mafragh$Spatial.contour,
 ## Spatial mapping
 
 
-```r
+``` r
 s.value(mafragh$xy, mafragh$flo[, 1:4], method = "size",
     symbol = "circle", Sp = mafragh$Spatial.contour)
 ```
@@ -128,7 +136,7 @@ s.value(mafragh$xy, mafragh$flo[, 1:4], method = "size",
 
 Compute Moran's index for the five first species:
 
-```r
+``` r
 moran.randtest(mafragh$flo[, 1:5], lw)
 ```
 
@@ -142,11 +150,11 @@ moran.randtest(mafragh$flo[, 1:5], lw)
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
 ##   Test         Obs    Std.Obs   Alter Pvalue
-## 1  Sp1  0.33419967  6.2600537 greater  0.001
-## 2  Sp2  0.38260466  6.4139654 greater  0.001
-## 3  Sp3  0.16729450  3.1375972 greater  0.005
-## 4  Sp4 -0.03331651 -0.5118008 greater  0.935
-## 5  Sp5  0.06837558  1.5826055 greater  0.081
+## 1  Sp1  0.33419967  6.2609725 greater  0.001
+## 2  Sp2  0.38260466  6.4149302 greater  0.001
+## 3  Sp3  0.16729450  3.1369718 greater  0.005
+## 4  Sp4 -0.03331651 -0.5116528 greater  0.935
+## 5  Sp5  0.06837558  1.5901807 greater  0.080
 ```
 
 
@@ -156,7 +164,7 @@ moran.randtest(mafragh$flo[, 1:5], lw)
 ### Perform the analysis
 
 
-```r
+``` r
 pca_veg &lt;- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE)
 *ms_veg &lt;- multispati(pca_veg, lw, scannf = FALSE)
 ```
@@ -164,7 +172,7 @@ pca_veg &lt;- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE)
 ---
 ## Have a look to the summary
 
-```r
+``` r
 summary(ms_veg)
 ```
 
@@ -188,13 +196,13 @@ summary(ms_veg)
 ## Plot the results
 
 
-```r
+``` r
 g1 &lt;- plot(ms_veg)
 ```
 
 &lt;img src="fig/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 names(g1)
 ```
 
@@ -205,7 +213,7 @@ names(g1)
 ## Loadings for variables
 
 
-```r
+``` r
 g1$loadings
 ```
 
@@ -216,7 +224,7 @@ g1$loadings
 ## Scores for individuals and lagged scores
 
 
-```r
+``` r
 g1$row
 ```
 
@@ -230,7 +238,7 @@ mem_sub
 ## Moran's Eigenvectors Maps
 
 
-```r
+``` r
 me &lt;- mem(lw)
 s.value(mafragh$xy, me[, 1:4], Sp = mafragh$Spatial.contour)
 ```
@@ -274,7 +282,7 @@ mem_sub$summary
 ### Spatial RDA
 
 
-```r
+``` r
 rda_spat &lt;- pcaiv(pca_veg, mem_sub$MEM.select, scannf = FALSE)
 plot(rda_spat)
 ```
@@ -286,7 +294,7 @@ plot(rda_spat)
 ### Variation partitioning
 
 
-```r
+``` r
 varipart(pca_veg$tab, mem_sub$MEM.select, mafragh$env)
 ```
 
@@ -303,10 +311,10 @@ varipart(pca_veg$tab, mem_sub$MEM.select, mafragh$env)
 ## 
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
-##   Test       Obs   Std.Obs   Alter Pvalue
-## 1   ab 0.4001092 16.692070 greater  0.001
-## 2   bc 0.2366554  7.976584 greater  0.001
-## 3  abc 0.4851531 11.827304 greater  0.001
+##      Test       Obs   Std.Obs   Alter Pvalue
+## 1   ab(X) 0.4001092 16.692070 greater  0.001
+## 2   bc(W) 0.2366554  7.976584 greater  0.001
+## 3 abc(XW) 0.4851531 11.827304 greater  0.001
 ## 
 ## 
 ## Individual fractions:
@@ -333,9 +341,9 @@ varipart(pca_veg$tab, mem_sub$MEM.select, mafragh$env)
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -376,6 +384,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

@@ -4,7 +4,7 @@
     <title>Methods partitioning individuals</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-28" />
+    <meta name="date" content="2025-10-19" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="custom.css" type="text/css" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
@@ -13,10 +13,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Methods partitioning individuals
+]
+.subtitle[
 ## in practice
+]
+.author[
 ### Stéphane Dray
-### 2022-02-28
+]
+.date[
+### 2025-10-19
+]
 
 ---
 
@@ -55,7 +63,7 @@ class: center, middle, inverse, title-slide
 ## Perform the analysis
 
 
-```r
+``` r
 library(ade4)
 library(adegraphics)
 data(meau)
@@ -66,7 +74,7 @@ pca_env &lt;- dudi.pca(meau$env, scannf = FALSE)
 ---
 ## Have a look to the summary
 
-```r
+``` r
 summary(wca.season)
 ```
 
@@ -92,13 +100,13 @@ summary(wca.season)
 ## Plot the results
 
 
-```r
+``` r
 g1 &lt;- plot(wca.season)
 ```
 
 &lt;img src="fig/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 names(g1)
 ```
 
@@ -109,7 +117,7 @@ names(g1)
 ## Loadings for variables
 
 
-```r
+``` r
 g1$loadings
 ```
 
@@ -121,7 +129,7 @@ g1$loadings
 
 .pull-left[
 
-```r
+``` r
 g1$ccrow
 ```
 
@@ -132,7 +140,7 @@ g1$ccrow
 
 .pull-right[
 
-```r
+``` r
 g1$row
 ```
 
@@ -147,7 +155,7 @@ g1$row
 ## Perform the analysis
 
 
-```r
+``` r
 *bca.season &lt;- bca(pca_env, meau$design$season, scannf = FALSE)
 ```
 
@@ -156,7 +164,7 @@ g1$row
 ## Test the significance of the link
 .pull-left[
 
-```r
+``` r
 rt.bca &lt;- randtest(bca.season)
 plot(rt.bca)
 ```
@@ -165,7 +173,7 @@ plot(rt.bca)
 ]
 .pull-right[
 
-```r
+``` r
 rt.bca
 ```
 
@@ -180,14 +188,14 @@ rt.bca
 ## Alternative hypothesis: greater 
 ## 
 ##     Std.Obs Expectation    Variance 
-## 3.441984734 0.131799151 0.002944921
+## 3.750947355 0.129063528 0.002552928
 ```
 ]
 
 ---
 ## Have a look to the summary
 
-```r
+``` r
 summary(bca.season)
 ```
 
@@ -213,13 +221,13 @@ summary(bca.season)
 ## Plot the results
 
 
-```r
+``` r
 g1 &lt;- plot(bca.season)
 ```
 
 &lt;img src="fig/unnamed-chunk-13-1.svg" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 names(g1)
 ```
 
@@ -230,7 +238,7 @@ names(g1)
 ## Loadings for variables
 
 
-```r
+``` r
 g1$loadings
 ```
 
@@ -242,7 +250,7 @@ g1$loadings
 
 .pull-left[
 
-```r
+``` r
 g1$class
 ```
 
@@ -253,7 +261,7 @@ g1$class
 
 .pull-right[
 
-```r
+``` r
 g1$row
 ```
 
@@ -267,7 +275,7 @@ g1$row
 ## Cross-validation
 
 
-```r
+``` r
 xval &lt;- loocv(bca.season)
 s.class(xval$XValCoord, meau$design$season, col = TRUE,
     star = 0, ell = 0, chull = 1)
@@ -282,7 +290,7 @@ s.class(xval$XValCoord, meau$design$season, col = TRUE,
 ## Perform the analysis
 
 
-```r
+``` r
 dis.season &lt;- discrimin(pca_env, meau$design$season,
 *   scannf = FALSE)
 ```
@@ -292,7 +300,7 @@ dis.season &lt;- discrimin(pca_env, meau$design$season,
 ## Test the significance of the link
 .pull-left[
 
-```r
+``` r
 rt.dis &lt;- randtest(dis.season)
 plot(rt.dis)
 ```
@@ -301,7 +309,7 @@ plot(rt.dis)
 ]
 .pull-right[
 
-```r
+``` r
 rt.dis
 ```
 
@@ -316,7 +324,7 @@ rt.dis
 ## Alternative hypothesis: greater 
 ## 
 ##      Std.Obs  Expectation     Variance 
-## 5.6562420608 0.1290462401 0.0004972476
+## 5.6807216790 0.1298225308 0.0004869217
 ```
 ]
 
@@ -324,13 +332,13 @@ rt.dis
 ## Plot the results
 
 
-```r
+``` r
 g1 &lt;- plot(dis.season)
 ```
 
 &lt;img src="fig/unnamed-chunk-21-1.svg" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 names(g1)
 ```
 
@@ -341,7 +349,7 @@ names(g1)
 ## Loadings for variables
 
 
-```r
+``` r
 g1$loadings
 ```
 
@@ -353,7 +361,7 @@ g1$loadings
 
 .pull-left[
 
-```r
+``` r
 g1$class
 ```
 
@@ -364,7 +372,7 @@ g1$class
 
 .pull-right[
 
-```r
+``` r
 g1$row
 ```
 
@@ -389,9 +397,9 @@ g1$row
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -432,6 +440,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
