@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-28" />
+    <meta name="date" content="2025-10-18" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -12,10 +12,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Training in ade4 in R - Module II: Advanced methods
+]
+.subtitle[
 ## Two-table methods
+]
+.author[
 ### Stéphane Dray
-### 2022-02-28
+]
+.date[
+### 2025-10-18
+]
 
 ---
 
@@ -44,7 +52,7 @@ class:
 
 
 
-```r
+``` r
 library(ade4)
 library(adegraphics)
 adegpar(paxes.draw = TRUE, pbackground.col = "lightgrey",
@@ -88,7 +96,7 @@ Describe the information contained in the table:
 
 ---
 
-```r
+``` r
 pca_fish &lt;- dudi.pca(doubs$fish, scale = FALSE, scannf = FALSE)
 biplot(pca_fish, ppoints.col = "blue", row.plabel.cex = 0,
     posieig = "none")
@@ -98,7 +106,7 @@ biplot(pca_fish, ppoints.col = "blue", row.plabel.cex = 0,
 
 ---
 
-```r
+``` r
 s.value(doubs$xy, doubs$fish[, 1:16], centerpar = TRUE,
     symbol = "circle", plegend.drawKey = FALSE, paxes.draw = FALSE)
 ```
@@ -107,7 +115,7 @@ s.value(doubs$xy, doubs$fish[, 1:16], centerpar = TRUE,
 
 ---
 
-```r
+``` r
 s.value(doubs$xy, pca_fish$li, symbol = "circle",
     paxes.draw = FALSE)
 ```
@@ -182,7 +190,7 @@ and interpret the structures with the second table using simple tools
 ### Graphics
 
 
-```r
+``` r
 s.value(pca_fish$li,
     scale(doubs$env$dfs))
 ```
@@ -195,7 +203,7 @@ s.value(pca_fish$li,
 ### Correlation
 
 
-```r
+``` r
 s1d.curve(pca_fish$li,
     p1.horizontal = FALSE,
     at = doubs$env$dfs)
@@ -203,7 +211,7 @@ s1d.curve(pca_fish$li,
 
 &lt;img src="fig/unnamed-chunk-4-1.svg" width="90%" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 cor(pca_fish$li, doubs$env$dfs)
 ```
 
@@ -219,7 +227,7 @@ cor(pca_fish$li, doubs$env$dfs)
 ### Correlation
 
 
-```r
+``` r
 s.corcircle(cor(doubs$env,
     pca_fish$li))
 ```
@@ -229,7 +237,7 @@ s.corcircle(cor(doubs$env,
 .pull-right[
 ### Regression
 
-```r
+``` r
 lm1 &lt;- lm(as.matrix(pca_fish$li) ~
     as.matrix(doubs$env))
 s.arrow(coefficients(lm1)[-1,
@@ -258,7 +266,7 @@ Simple ordination
 
 ---
 
-```r
+``` r
 conc &lt;- cbind(doubs$fish, doubs$env)
 biplot(dudi.pca(conc, scannf = FALSE), col.plabel.col = rep(c(2,
     4), c(27, 11)))
@@ -322,7 +330,7 @@ A compromise between canonical correlation analysis, and the two PCAs:
 
 ---
 
-```r
+``` r
 pca_env &lt;- dudi.pca(doubs$env, scannf = FALSE)
 coi &lt;- coinertia(pca_fish, pca_env, scannf = FALSE)
 plot(coi)
@@ -332,7 +340,7 @@ plot(coi)
 
 ---
 
-```r
+``` r
 rt.coi &lt;- randtest(coi)
 plot(rt.coi)
 ```
@@ -355,13 +363,17 @@ Try `summary(coi)`
 
 This framework encompasses:
 
-* Redundancy Analysis
+* Redundancy Analysis (RDA)
 
-* Canonical Correspondence Analysis
+* Canonical Correspondence Analysis (CCA)
+
+In practice, it corresponds to the PCA (for RDA) or CA (for CCA) of the predicted table `\(\widehat{\mb{Y}}\)` containing the prediction of the linear models of `\(\mb{Y}\)` by `\(\mb{X}\)`.
+
+In vegan, use functions `rda` and `cca` with a formula interface.
 
 ---
 
-```r
+``` r
 rda1 &lt;- pcaiv(pca_fish, doubs$env, scannf = FALSE)
 plot(rda1)
 ```
@@ -370,7 +382,7 @@ plot(rda1)
 
 ---
 
-```r
+``` r
 rt.rda &lt;- randtest(rda1)
 plot(rt.rda)
 ```
@@ -383,6 +395,38 @@ When a PCA is applied on the response table, the method is called Redundancy Ana
 
 Try to apply a correspondence analysis (`dudi.coa`) instead of a PCA on `doubs$fish`. You obtain Canonical Correspondence Analysis.
 ---
+
+## Partial analyses
+
+In some circumstances, it is useful to remove an effect corresponding to covariables (e.g., sampling constraints) to identify structures that are independent to this effect. 
+
+Partial analysis is implemented in function `orthopcaiv` which focuses on the analysis of residual table `\(\mb{E} = \mb{Y} - \widehat{\mb{Y}}\)`.
+
+In vegan, this is implemented by `Condition()` in the formula framework.
+
+---
+
+## Variation partitioning
+
+
+.center[
+&lt;img src="img/varpart1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+When multiple sets of explanatory variables are considered, variation partitioning can be applied to identify their additive contribution to the structuring of the response table (see `varipart` or more complete `vegan::varpart`).
+
+
+.center[
+
+&lt;img src="img/varpart2.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+]
+
+---
+
 ## One particular case
 .pull-left[
 .center[
@@ -448,6 +492,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

@@ -41,6 +41,8 @@ class:
 # Introduction
 
 ```{r, include = FALSE}
+library(ade4)
+library(adegraphics)
 adeg <- adegpar()
 ```
 
@@ -300,9 +302,13 @@ Try `summary(coi)`
 
 This framework encompasses:
 
-* Redundancy Analysis
+* Redundancy Analysis (RDA)
 
-* Canonical Correspondence Analysis
+* Canonical Correspondence Analysis (CCA)
+
+In practice, it corresponds to the PCA (for RDA) or CA (for CCA) of the predicted table $\widehat{\mb{Y}}$ containing the prediction of the linear models of $\mb{Y}$ by $\mb{X}$.
+
+In vegan, use functions `rda` and `cca` with a formula interface.
 
 ---
 ```{r, fig.width = 5, fig.height=5}
@@ -322,6 +328,42 @@ When a PCA is applied on the response table, the method is called Redundancy Ana
 
 Try to apply a correspondence analysis (`dudi.coa`) instead of a PCA on `doubs$fish`. You obtain Canonical Correspondence Analysis.
 ---
+
+## Partial analyses
+
+In some circumstances, it is useful to remove an effect corresponding to covariables (e.g., sampling constraints) to identify structures that are independent to this effect. 
+
+Partial analysis is implemented in function `orthopcaiv` which focuses on the analysis of residual table $\mb{E} = \mb{Y} - \widehat{\mb{Y}}$.
+
+In vegan, this is implemented by `Condition()` in the formula framework.
+
+---
+
+## Variation partitioning
+
+
+.center[
+```{r, echo = FALSE, out.width ="50%"}
+knitr::include_graphics("img/varpart1.png")
+```
+
+]
+
+
+When multiple sets of explanatory variables are considered, variation partitioning can be applied to identify their additive contribution to the structuring of the response table (see `varipart` or more complete `vegan::varpart`).
+
+
+.center[
+
+```{r, echo = FALSE, out.width ="40%"}
+knitr::include_graphics("img/varpart2.png")
+```
+
+
+]
+
+---
+
 ## One particular case
 .pull-left[
 .center[
