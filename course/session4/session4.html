@@ -4,7 +4,7 @@
     <title>Training in ade4 in R - Module II: Advanced methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Stéphane Dray" />
-    <meta name="date" content="2022-02-28" />
+    <meta name="date" content="2025-10-18" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -12,10 +12,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Training in ade4 in R - Module II: Advanced methods
+]
+.subtitle[
 ## Spatial Multivariate Analysis
+]
+.author[
 ### Stéphane Dray
-### 2022-02-28
+]
+.date[
+### 2025-10-18
+]
 
 ---
 
@@ -41,7 +49,7 @@ class: center, middle, inverse, title-slide
 class:
 # Introduction
 
-```r
+``` r
 library(ade4)
 library(adegraphics)
 adegpar(background.col = "lightgrey")
@@ -51,15 +59,15 @@ adegpar(background.col = "lightgrey")
 ## list()
 ```
 
-```r
+``` r
 data(mafragh)
 names(mafragh)
 ```
 
 ```
-##  [1] "xy"              "flo"             "neig"            "env"            
-##  [5] "partition"       "area"            "tre"             "traits"         
-##  [9] "nb"              "Spatial"         "spenames"        "Spatial.contour"
+##  [1] "xy"              "flo"             "env"             "partition"      
+##  [5] "area"            "tre"             "traits"          "nb"             
+##  [9] "Spatial"         "spenames"        "Spatial.contour"
 ```
 * Species table (`flo`): abundance indexes of 56 plant species recorded for 97 sites in the Mafragh plain (Algeria)
 
@@ -88,7 +96,7 @@ Describe the information contained in the table:
 
 ---
 
-```r
+``` r
 pca_veg &lt;- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE)
 biplot(pca_veg, ppoints.col = "blue", row.plabel.cex = 0,
     posieig = "none")
@@ -160,7 +168,7 @@ and detect spatial structures using simple tools
 ## Spatial mapping
 
 
-```r
+``` r
 s.value(mafragh$xy, pca_veg$li)
 ```
 
@@ -171,7 +179,7 @@ s.value(mafragh$xy, pca_veg$li)
 ## Correlation with spatial predictors
 
 
-```r
+``` r
 poly.xy &lt;- poly(as.matrix(mafragh$xy),
     degree = 2)
 s.value(mafragh$xy, poly.xy)
@@ -179,7 +187,7 @@ s.value(mafragh$xy, poly.xy)
 
 &lt;img src="fig/unnamed-chunk-3-1.svg" width="45%" style="display: block; margin: auto;" /&gt;
 
-```r
+``` r
 cor(pca_veg$li, poly.xy)
 ```
 
@@ -221,7 +229,7 @@ Spatial information :
 * Study their link
 
 
-```r
+``` r
 dx &lt;- dist(mafragh$flo)
 ds &lt;- dist(mafragh$xy)
 plot(dx ~ ds)
@@ -233,7 +241,7 @@ plot(dx ~ ds)
 
 .pull-right[
 
-```r
+``` r
 mantel.randtest(dx, ds)
 ```
 
@@ -248,7 +256,7 @@ mantel.randtest(dx, ds)
 ## Alternative hypothesis: greater 
 ## 
 ##      Std.Obs  Expectation     Variance 
-## 8.1460917683 0.0004854407 0.0008128567
+## 8.1788981348 0.0008067148 0.0008041196
 ```
 
 ]
@@ -262,7 +270,7 @@ $$ \mb{W}=[w_{ij}] $$
 
 
 `$$w_{ij} = 1 \textrm{ if sites } i \textrm{ and } j \textrm{ are neighbors}$$` 
-`$$w_{ij} = 1 \textrm{ otherwise}$$`
+`$$w_{ij} = 0 \textrm{ otherwise}$$`
 
 Options:
 
@@ -300,7 +308,7 @@ It is a measure of the link between the original variable ( `\(\mb{z}\)` ) and i
 
 .pull-left[
 
-```r
+``` r
 library(adespatial)
 library(spdep)
 s.value(mafragh$xy, pca_veg$li[, 1])
@@ -312,7 +320,7 @@ s.value(mafragh$xy, pca_veg$li[, 1])
 
 .pull-right[
 
-```r
+``` r
 moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ```
 
@@ -327,7 +335,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       8.387562399      -0.014619096       0.003688696
+##       7.885767676      -0.012439987       0.004137451
 ```
 
 ]
@@ -337,7 +345,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 
 .pull-left[
 
-```r
+``` r
 moran.plot(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ```
 
@@ -347,7 +355,7 @@ moran.plot(pca_veg$li[, 1], nb2listw(mafragh$nb))
 
 .pull-right[
 
-```r
+``` r
 moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ```
 
@@ -362,7 +370,7 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ## Alternative hypothesis: greater 
 ## 
 ## Std.Obs.statistic       Expectation          Variance 
-##       7.748020071      -0.005346483       0.004166839
+##       8.238948605      -0.009435820       0.003745568
 ```
 
 ]
@@ -377,13 +385,16 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 * Orthogonal vectors maximizing the spatial autocorrelation
 
 * They can be used as spatial predictors in correlation or regression models (e.g., scalogram)
+
+&lt;img src="fig/unnamed-chunk-11-1.svg" width="60%" style="display: block; margin: auto;" /&gt;
+
 ]
 
 .pull-right[
 
-&lt;img src="fig/unnamed-chunk-11-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
-
 &lt;img src="fig/unnamed-chunk-12-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="fig/unnamed-chunk-13-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -395,6 +406,14 @@ moran.randtest(pca_veg$li[, 1], nb2listw(mafragh$nb))
 ---
 
 ## Multispati
+.pull-left[
+.center[
+&lt;img src="img/onetable.png" height="150px" style="display: block; margin: auto;" /&gt;
+]
+]
+.pull-right[
+&lt;img src="fig/unnamed-chunk-15-1.svg" height="150px" style="display: block; margin: auto;" /&gt;
+]
 
 This analysis maximizes the product 
 
@@ -408,14 +427,84 @@ and thus finds a linear combination of variables maximizing a compromise between
 It corresponds to a coinertia analysis between the original table `\(\mb{X}\)` and its lagged version `\(\tilde{\mb{X}}=\mb{WX}\)`.
 ---
 
+## Multispati
+
+``` r
+ms1 &lt;- multispati(pca_veg, nb2listw(mafragh$nb), scannf = FALSE,
+    nfposi = 2, nfnega = 0)
+summary(ms1)
+```
+
+```
+## 
+## Multivariate Spatial Analysis
+## Call: multispati(dudi = pca_veg, listw = nb2listw(mafragh$nb), scannf = FALSE, 
+##     nfposi = 2, nfnega = 0)
+## 
+## Scores from the initial duality diagram:
+##          var      cum     ratio     moran
+## RS1 5.331174 5.331174 0.2834660 0.4947964
+## RS2 1.972986 7.304159 0.3883725 0.4435555
+## 
+## Multispati eigenvalues decomposition:
+##          eig      var     moran
+## CS1 2.992293 4.862003 0.6154445
+## CS2 1.164390 1.885904 0.6174172
+```
+---
+
+.pull-left[
+
+``` r
+s.label(ms1$li)
+```
+
+&lt;img src="fig/unnamed-chunk-17-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+maximization of the product of variance and Moran's I
+]
+.pull-right[
+
+``` r
+s.value(mafragh$xy, ms1$li, nb = mafragh$nb)
+```
+
+&lt;img src="fig/unnamed-chunk-18-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+``` r
+s.arrow(ms1$c1)
+```
+
+&lt;img src="fig/unnamed-chunk-19-1.svg" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
 ## MEM-based models
+
+.pull-left[
+.center[
+&lt;img src="img/Xspat2.png" height="150px" style="display: block; margin: auto;" /&gt;
+]
+]
+.pull-right[
+&lt;img src="fig/unnamed-chunk-21-1.svg" height="150px" style="display: block; margin: auto;" /&gt;
+]
 
 Spatial eigenvectors can be used as predictors in regression models (e.g., redundancy analysis)
 
 * As there is a high number of predictors, variable selection should be preformed prior to the analysis
 
-* When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table
+* When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table (variation partitioning).
+
+see [adespatial tutorial](https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html)
 ---
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -463,6 +552,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

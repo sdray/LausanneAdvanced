@@ -295,6 +295,11 @@ moran.randtest(pca_veg$li[,1], nb2listw(mafragh$nb))
 * Orthogonal vectors maximizing the spatial autocorrelation
 
 * They can be used as spatial predictors in correlation or regression models (e.g., scalogram)
+
+```{r, echo = FALSE, out.width="60%"}
+s.value(mafragh$xy, pca_veg$li[,1], main = "PCA axis 1")
+```
+
 ]
 
 .pull-right[
@@ -319,6 +324,18 @@ plot(sc1)
 ---
 
 ## Multispati
+.pull-left[
+.center[
+```{r, echo=FALSE, out.height="150px"}
+knitr::include_graphics("img/onetable.png", dpi=NA)
+```
+]
+]
+.pull-right[
+```{r, echo = FALSE, fig.height=2, fig.width=2, out.height="150px"}
+s.label(mafragh$xy, nb = mafragh$nb, plabel.cex = 0)
+```
+]
 
 This analysis maximizes the product 
 
@@ -332,11 +349,57 @@ and thus finds a linear combination of variables maximizing a compromise between
 It corresponds to a coinertia analysis between the original table $\mb{X}$ and its lagged version $\tilde{\mb{X}}=\mb{WX}$.
 ---
 
+## Multispati
+```{r}
+ms1 <- multispati(pca_veg, nb2listw(mafragh$nb), scannf = FALSE, nfposi = 2, nfnega = 0)
+summary(ms1)
+```
+---
+
+.pull-left[
+```{r, out.width="70%"}
+s.label(ms1$li)
+```
+<br>
+<br>
+<br>
+
+maximization of the product of variance and Moran's I
+]
+.pull-right[
+```{r, out.width="70%", fig.width = 6, fig.height=3}
+s.value(mafragh$xy, ms1$li, nb = mafragh$nb)
+
+```
+
+```{r, out.width="70%"}
+s.arrow(ms1$c1)
+```
+
+]
+
+---
+
 ## MEM-based models
+
+.pull-left[
+.center[
+```{r, echo=FALSE, out.height="150px"}
+knitr::include_graphics("img/Xspat2.png", dpi=NA)
+```
+]
+]
+.pull-right[
+```{r, echo = FALSE, fig.height=2, fig.width=6, out.height="150px"}
+s.value(mafragh$xy, me[, c(1,2, 40)], plegend.drawKey = FALSE)
+```
+]
 
 Spatial eigenvectors can be used as predictors in regression models (e.g., redundancy analysis)
 
 * As there is a high number of predictors, variable selection should be preformed prior to the analysis
 
-* When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table
----
+* When other predictors are considered, variation partitioning can be used. This approach based on combination of several RDA models allows to evaluate the relative contribution of spatial and other predictors to explain the response table (variation partitioning).
+
+* see [adespatial tutorial](https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html) for more details
+
